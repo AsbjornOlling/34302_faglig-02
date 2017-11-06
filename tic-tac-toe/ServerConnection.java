@@ -12,16 +12,26 @@ import java.io.BufferedReader;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 public class ServerConnection {
 
-	// Flags
+	// private constants	
+	/* are these even reused? if we only use them in the constructor, 
+	 * maybe we could make do with just the constructor parameters? */
 	private final String HOST; // The host adress
 	private final int PORT; // The host port
+
+	// other private fields
+	Socket link = null;
+	BufferedReader response = null;
+	PrintWriter outgoing;
+
+	// fields to be fetched by main class
 	public String startingPlayer; // Who starts
 	public String boardState; // What does the board look like now
 	public String gameState; // The line about win/lose or keep going
-	public boolean serverIsActive;
+	public boolean serverIsActive = false; // whether the connection is working - false until established
 
 	// The constructor handling the server connection
 	public ServerConnection(String host, int port) {
@@ -30,30 +40,38 @@ public class ServerConnection {
 		this.HOST = host;
 		this.PORT = port;
 
-		// Run the method to access the server
-		accessServer();
-	}
-
-	public void accessServer() {
-
-		// Variable for link
-		Socket link = null;
-
 		// Error handling for link
 		try {
 			link = new Socket(HOST, PORT);
 
 			serverIsActive = true;
-			BufferedReader response = new BufferedReader(new InputStreamReader(link.getInputStream()));
+			response = new BufferedReader(new InputStreamReader(link.getInputStream()));
+			outgoing = new PrintWriter(link.getOutputStream());
 
-			// First round
+			// Read the first lines (very first one is unique)
 			startingPlayer = response.readLine();
 			boardState = response.readLine();
 			gameState = response.readLine();
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
 		}
+	} // constructor
 
-	} // accessServer
+	// just send a passed integer to socket using printwriter
+	// TODO: probably add some error handling here - retry if not received, etc
+	public void playerMove(int space) {
+		outgoing.print(space+"\r\n");
+		outgoing.flush();
+		getNewState();
+	} // getNewState
+
+	public void getNewState(){
+		try {
+			boardState = response.readLine();
+			gameState = response.readLine();
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+	} // getNewState
 
 } // class
