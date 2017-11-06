@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.net.Socket;
-
 /* Handles connection to server;
  *
  * Contains methods that will send
@@ -11,18 +8,23 @@ import java.net.Socket;
  * Blame David for any and all faults.
  */
 
+import java.io.BufferedReader;
+import java.net.Socket;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class ServerConnection {
 
 	// Flags
-	private static InetAddress host; // The host adress
-	private static final int PORT; // The host port
+	private final String host; // The host adress
+	private final int PORT; // The host port
 	public String startingPlayer; // Who starts
 	public String boardState; // What does the board look like now
 	public String gameState; // The line about win/lose or keep going
 	public boolean serverIsActive;
 
 	// The constructor handling the server connection
-	public ServerConnect(String IP, int port) {
+	public ServerConnection(String IP, int port) {
 
 		// Initializing our flags
 		PORT = port;
@@ -32,7 +34,7 @@ public class ServerConnection {
 		accessServer();
 	}
 
-	public static void accessServer() {
+	public void accessServer() {
 
 		// Variable for link
 		Socket link = null;
@@ -42,7 +44,7 @@ public class ServerConnection {
 			link = new Socket(host, PORT);
 
 			serverIsActive = true;
-			BufferedReader response = new BufferedReader(link.getInputStream());
+			BufferedReader response = new BufferedReader(new InputStreamReader(link.getInputStream()));
 
 			// First round
 			startingPlayer = response.readLine();
@@ -52,6 +54,6 @@ public class ServerConnection {
 			ioEx.printStackTrace();
 		}
 
-	}
+	} // accessServer
 
-}
+} // class

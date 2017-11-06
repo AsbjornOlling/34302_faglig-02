@@ -18,19 +18,28 @@
 // import java.net.InetAdress;
 
 public class TicTacToe {
-	private char[] boardState;
+	private static char[] boardState = new char[9];
+	private static ServerConnection LarsServer;
 
 	public static void main(String[] args) {
 
 		// instantiate connection object
-		ServerConnection LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
+		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
 
+		// insert extra server move, if serverstarts
+		// TODO - maybe don't call this function twice
 		if ( parseStartingPlayer() == "SERVER" ) {
-			System.out.println("Staalhagen has the starting turn. Watch out.");
-			this.boardState = parseBoardState();
+			System.out.println("Staalhagen has the starting turn. Watch out!");
+			// boardState = parseBoardState();
+		} else if ( parseStartingPlayer() == "PLAYER" ) {
+			// do nothing, just start the while loop
+			// where the player is first anyway
+		} else {
+			throw new IllegalArgumentException("parseStartingPlayer() method returned funnay value.");
 		}
 
-		while ( LarsServer.active ) {
+		// loop of server and player moves
+		while ( LarsServer.serverIsActive ) {
 
 			// GAMEPLAN
 			// if LarsServer.startingPlayer() == "SERVER"
@@ -56,23 +65,32 @@ public class TicTacToe {
 	// parse starting player line from field in connection object
 	private static String parseStartingPlayer() {
 		String startingPlayerLine = LarsServer.startingPlayer;
-		char playerSymbol = startingPlayerLine[startingPlayerLine.length()-1];
-		if ( playerSymbol == 'O' ) {
-			String startingPlayerString = "SERVER";
-		} else if ( playerSymbol == 'X' ) {
-			String startingPlayerString = "PLAYER";
-		} else {
-			throw new IllegalArgumentException("Line fetched from connection object: "+startingPlayerLine);
-		}
+		char playerSymbol = startingPlayerLine.charAt(startingPlayerLine.length()-1);
 
+		String startingPlayerString = null;
+		if ( playerSymbol == 'O' ) {
+			startingPlayerString = "SERVER";
+		} else if ( playerSymbol == 'X' ) {
+			startingPlayerString = "PLAYER";
+		} else {
+			startingPlayerString = null;
+			throw new IllegalArgumentException("Illegal line fetched from connection object: "+startingPlayerLine);
+		} 
 		return startingPlayerString;
 	} // parseStartingPlayer
 
+	/*
 	// TODO write this board-state parser
 	// reads server output from field in connection object
 	private static char[] parseBoardState() {
 		String boardLine = LarsServer.boardState;
+
+		// loop through last 9 chars in the line from server
+		for (int i = 9; i < boardLine.length() - 1; i++ ) {
+			char boardLineChar = boardLine[i];
+			if (boardLineChar != boardState[i] && boardState)
+		}
 		return boardArray;
-	} //
+	} // parseBoardState */
 
 } // class
