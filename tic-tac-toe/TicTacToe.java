@@ -29,6 +29,7 @@ public class TicTacToe {
 		if ( parseStartingPlayer() == "SERVER" ) {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
 			boardState = parseBoardState();
+			boardState = parseBoardState();
 			tempBoardDrawer();
 		} else if ( parseStartingPlayer() == "PLAYER" ) {
 			// do nothing, just start the while loop
@@ -62,6 +63,7 @@ public class TicTacToe {
 		} // while loop
 	} // main
 
+
 	// TODO maybe make this be about "player symbol" instead
 	// parse starting player line from field in connection object
 	private static String parseStartingPlayer() {
@@ -80,9 +82,11 @@ public class TicTacToe {
 		return startingPlayerString;
 	} // parseStartingPlayer
 
+
 	// TODO - maybe make this leaner:
 	// * do less checks
 	// * write directly to field
+	//
 	// takes the line given by the server, and turns it into an array
 	private static char[] parseBoardState() {
 		String boardLine = LarsServer.boardState;
