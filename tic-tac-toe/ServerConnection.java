@@ -13,6 +13,16 @@ public class ServerConnection {
 	//Flags
 	private static InetAddress host; //The host adress
 	private static final int PORT; //The host port
+	public String startingPlayer;
+	public char[] boardState;
+	/*
+	 * States:
+	 * 0 = unresolves
+	 * 1 = player win
+	 * 2 = serverwin
+	 * 3 = tie
+	 */
+	public int winState;
 	
 	//The constructor handling the server connection
 	public ServerConnect (String IP, int port) {
