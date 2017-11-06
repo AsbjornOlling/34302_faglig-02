@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 public class ServerConnection {
 
 	// Flags
-	private final String host; // The host adress
+	private final String HOST; // The host adress
 	private final int PORT; // The host port
 	public String startingPlayer; // Who starts
 	public String boardState; // What does the board look like now
@@ -24,11 +24,11 @@ public class ServerConnection {
 	public boolean serverIsActive;
 
 	// The constructor handling the server connection
-	public ServerConnection(String IP, int port) {
+	public ServerConnection(String host, int port) {
 
 		// Initializing our flags
-		PORT = port;
-		host = IP;
+		this.PORT = port;
+		this.HOST = host;
 
 		// Run the method to access the server
 		accessServer();
@@ -41,7 +41,7 @@ public class ServerConnection {
 
 		// Error handling for link
 		try {
-			link = new Socket(host, PORT);
+			link = new Socket(HOST, PORT);
 
 			serverIsActive = true;
 			BufferedReader response = new BufferedReader(new InputStreamReader(link.getInputStream()));
