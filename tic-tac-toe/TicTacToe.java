@@ -88,26 +88,14 @@ public class TicTacToe {
 	// * write directly to field
 	//
 	// takes the line given by the server, and turns it into an array
-	private static char[] parseBoardState() {
+	private static void parseBoardState() {
 		String boardLine = LarsServer.boardState;
-		char[] boardArray = new char[9];
 
 		// loop through last 9 chars in the line from server
 		for (int i = 0; i < boardLine.length() - 9; i++ ) {
 			char boardLineChar = boardLine.charAt(i+9);
-
-			// check if changes should be made
-			if (boardLineChar != boardState[i] && boardState[i] == '.') {
-				boardArray[i] = boardLineChar;
-			} else if (boardLineChar == boardState[i] && boardState[i] == '.') {
-				boardArray[i] = '.';
-			} else if (boardLineChar == boardState[i] && boardState[i] != '.') {
-				// do nothing
-			} else { // inconsistency in board - throw error
-				throw new ArithmeticException("Inconsistency between local and fetched board. Who do you think you are, some kind of hacker?");
-			} //*/
+			boardState[i] = boardLineChar;
 		} // loop
-		return boardArray;
 	} // parseBoardState */
 
 	// temporary drawing mechanism
