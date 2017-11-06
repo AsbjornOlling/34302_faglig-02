@@ -9,20 +9,29 @@
  * Blame Asbjørn for any and all faults.
  */
 
+// fra david
+// String boardState
+// String startingPlayer
+// String gameState
+//
+
+// import java.net.InetAdress;
+
 public class TicTacToe {
-	// hardcoded server values
-	private final String hostname = "itkomsrv.fotonik.dtu.dk";
-	private final int port = 1102;
+	private char[] boardState;
 
 	public static void main(String[] args) {
-		// call davids constructor
-		// errors because it doesn't exist yet
-		ServerConnection LarsServer = new ServerConnection(hostname,port);
 
-		while (LarsServer.active){
-			if ( LarsServer.startingPlayer == "SERVER" ) {
-				boardState = LarsServer.getBoardState();
-			}
+		// instantiate connection object
+		ServerConnection LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
+
+		if ( parseStartingPlayer() == "SERVER" ) {
+			System.out.println("Staalhagen has the starting turn. Watch out.");
+			this.boardState = parseBoardState();
+		}
+
+		while ( LarsServer.active ) {
+
 			// GAMEPLAN
 			// if LarsServer.startingPlayer() == "SERVER"
 			// 	boardState = LarsServer.getBoardState();
@@ -41,11 +50,29 @@ public class TicTacToe {
 			// if LarsServer.getWinState() == win || lose || tie  
 			//   - hvis gjorde noget, så slut
 			// ellers, loop igen.
+		} // while loop
+	} // main
 
+	// parse starting player line from field in connection object
+	private static String parseStartingPlayer() {
+		String startingPlayerLine = LarsServer.startingPlayer;
+		char playerSymbol = startingPlayerLine[startingPlayerLine.length()-1];
+		if ( playerSymbol == 'O' ) {
+			String startingPlayerString = "SERVER";
+		} else if ( playerSymbol == 'X' ) {
+			String startingPlayerString = "PLAYER";
+		} else {
+			throw new IllegalArgumentException("Line fetched from connection object: "+startingPlayerLine);
 		}
 
+		return startingPlayerString;
+	} // parseStartingPlayer
 
-
-	} // main
+	// TODO write this board-state parser
+	// reads server output from field in connection object
+	private static char[] parseBoardState() {
+		String boardLine = LarsServer.boardState;
+		return boardArray;
+	} //
 
 } // class
