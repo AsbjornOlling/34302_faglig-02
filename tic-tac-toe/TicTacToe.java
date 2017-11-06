@@ -13,12 +13,10 @@
 // String boardState
 // String startingPlayer
 // String gameState
-//
-
-// import java.net.InetAdress;
 
 public class TicTacToe {
-	private static char[] boardState = new char[9];
+	// private static char[] boardState = new char[9];
+	private static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
 	private static ServerConnection LarsServer;
 
 	public static void main(String[] args) {
@@ -30,7 +28,8 @@ public class TicTacToe {
 		// TODO - maybe don't call this function twice
 		if ( parseStartingPlayer() == "SERVER" ) {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
-			// boardState = parseBoardState();
+			boardState = parseBoardState();
+			tempBoardDrawer();
 		} else if ( parseStartingPlayer() == "PLAYER" ) {
 			// do nothing, just start the while loop
 			// where the player is first anyway
@@ -38,14 +37,14 @@ public class TicTacToe {
 			throw new IllegalArgumentException("parseStartingPlayer() method returned funnay value.");
 		}
 
+		/*
+		for (int i = 0; i < boardState.length; i++ ) {
+			System.out.println(boardState[i]);
+		} //*/
+
 		// loop of server and player moves
 		while ( LarsServer.serverIsActive ) {
 
-			// GAMEPLAN
-			// if LarsServer.startingPlayer() == "SERVER"
-			// 	boardState = LarsServer.getBoardState();
-			// 
-		// while (SERVER ACTIVE):
 			// ** PLAYER MOVES
 			// move = self.getUserInput() - få et gyldigt move fra bruger
 			// BoardDrawer.drawState(boardState); - tegn vores move
@@ -59,9 +58,11 @@ public class TicTacToe {
 			// if LarsServer.getWinState() == win || lose || tie  
 			//   - hvis gjorde noget, så slut
 			// ellers, loop igen.
+			
 		} // while loop
 	} // main
 
+	// TODO maybe make this be about "player symbol" instead
 	// parse starting player line from field in connection object
 	private static String parseStartingPlayer() {
 		String startingPlayerLine = LarsServer.startingPlayer;
@@ -79,18 +80,40 @@ public class TicTacToe {
 		return startingPlayerString;
 	} // parseStartingPlayer
 
-	/*
-	// TODO write this board-state parser
-	// reads server output from field in connection object
+	// TODO - maybe make this leaner:
+	// * do less checks
+	// * write directly to field
+	// takes the line given by the server, and turns it into an array
 	private static char[] parseBoardState() {
 		String boardLine = LarsServer.boardState;
+		char[] boardArray = new char[9];
 
 		// loop through last 9 chars in the line from server
-		for (int i = 9; i < boardLine.length() - 1; i++ ) {
-			char boardLineChar = boardLine[i];
-			if (boardLineChar != boardState[i] && boardState)
-		}
+		for (int i = 0; i < boardLine.length() - 9; i++ ) {
+			char boardLineChar = boardLine.charAt(i+9);
+
+			// check if changes should be made
+			if (boardLineChar != boardState[i] && boardState[i] == '.') {
+				boardArray[i] = boardLineChar;
+			} else if (boardLineChar == boardState[i] && boardState[i] == '.') {
+				boardArray[i] = '.';
+			} else if (boardLineChar == boardState[i] && boardState[i] != '.') {
+				// do nothing
+			} else { // inconsistency in board - throw error
+				throw new ArithmeticException("Inconsistency between local and fetched board. Who do you think you are, some kind of hacker?");
+			} //*/
+		} // loop
 		return boardArray;
 	} // parseBoardState */
+
+	// temporary drawing mechanism
+	private static void tempBoardDrawer() {
+		for (int i = 0; i < boardState.length; i++ ) {
+			System.out.print(boardState[i]);
+			if ((i+1) % 3 == 0) {
+				System.out.print("\n");
+			}
+		} // loop
+	} // Board Drawer
 
 } // class

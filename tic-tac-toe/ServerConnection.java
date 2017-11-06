@@ -27,8 +27,8 @@ public class ServerConnection {
 	public ServerConnection(String host, int port) {
 
 		// Initializing our flags
-		this.PORT = port;
 		this.HOST = host;
+		this.PORT = port;
 
 		// Run the method to access the server
 		accessServer();
