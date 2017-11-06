@@ -14,10 +14,18 @@
 // String startingPlayer
 // String gameState
 
+// predominant bug:
+// clearly blank spaces are often invalid
+// when checking move validity
+
+
+import java.util.Scanner;
+
 public class TicTacToe {
-	// private static char[] boardState = new char[9];
 	private static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
+	private static char playerSymbol;
 	private static ServerConnection LarsServer;
+	private static Scanner console = new Scanner(System.in);
 
 	public static void main(String[] args) {
 
@@ -25,78 +33,70 @@ public class TicTacToe {
 		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
 
 		// insert extra server move, if serverstarts
-		// TODO - maybe don't call this function twice
-		if ( parseStartingPlayer() == "SERVER" ) {
+		playerSymbol = parsePlayerSymbol();
+		if ( playerSymbol == 'O' ) {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
-			boardState = parseBoardState();
-			boardState = parseBoardState();
+			parseBoardState();
 			tempBoardDrawer();
-		} else if ( parseStartingPlayer() == "PLAYER" ) {
-			// do nothing, just start the while loop
-			// where the player is first anyway
+		} else if ( playerSymbol == 'X' ) {
+			// do nothing, just start the while loop,
+			// where the player is first anyway.
 		} else {
-			throw new IllegalArgumentException("parseStartingPlayer() method returned funnay value.");
+			throw new IllegalArgumentException("parseStartingPlayer() method returned funny value.");
 		}
 
-		/*
-		for (int i = 0; i < boardState.length; i++ ) {
-			System.out.println(boardState[i]);
-		} //*/
-
-		// loop of server and player moves
+		// loop of player and server moves
 		while ( LarsServer.serverIsActive ) {
 
-			// ** PLAYER MOVES
-			// move = self.getUserInput() - få et gyldigt move fra bruger
-			// BoardDrawer.drawState(boardState); - tegn vores move
-			// LarsServer.playerMove(the move) - send et gyldigt move
-			// if LarsServer.getWinState() == win || lose || tie  
-			//   - hvis gjorde noget, så slut
-			// else - ellers, får serveren lov
-			//   LarsServer.getBoardState();
-			//   BoardDrawer.drawState(boardState);
-			//
-			// if LarsServer.getWinState() == win || lose || tie  
-			//   - hvis gjorde noget, så slut
-			// ellers, loop igen.
+			// get a valid move from the player
+			System.out.println("Now it's your turn, place a "+playerSymbol+".");
+			System.out.print("Choose a space to put it, numbers 0 - 9: ");
+			int playerMove = console.nextInt();
+			while ( boardState[playerMove - 1] != '.' ) {
+				tempBoardDrawer();
+				System.out.println("That was an invalid move, try again.");
+				System.out.println("Choose a space to put it, numbers 0 - 9");
+				playerMove = console.nextInt();
+			}
+
+			// upload the move, and get new state
+			LarsServer.sendPlayerMove(playerMove);
+			parseBoardState();
+
+			// check for victory
+			if (! LarsServer.gameState.equals("YOUR TURN")) {
+				tempBoardDrawer();
+				System.out.println(LarsServer.gameState);
+				break;
+			}
+			tempBoardDrawer();
 			
 		} // while loop
 	} // main
 
 
-	// TODO maybe make this be about "player symbol" instead
 	// parse starting player line from field in connection object
-	private static String parseStartingPlayer() {
-		String startingPlayerLine = LarsServer.startingPlayer;
-		char playerSymbol = startingPlayerLine.charAt(startingPlayerLine.length()-1);
-
-		String startingPlayerString = null;
-		if ( playerSymbol == 'O' ) {
-			startingPlayerString = "SERVER";
-		} else if ( playerSymbol == 'X' ) {
-			startingPlayerString = "PLAYER";
-		} else {
-			startingPlayerString = null;
-			throw new IllegalArgumentException("Illegal line fetched from connection object: "+startingPlayerLine);
-		} 
-		return startingPlayerString;
+	private static char parsePlayerSymbol() {
+		char symbol = LarsServer.startingPlayer.charAt( LarsServer.startingPlayer.length() - 1);
+		if (! (symbol == 'X' || symbol== 'O') ) {
+			throw new IllegalArgumentException("parsePlayerSymbol() method received a funny value.");
+		}
+		return symbol;
 	} // parseStartingPlayer
 
 
-	// TODO - maybe make this leaner:
-	// * do less checks
-	// * write directly to field
-	//
-	// takes the line given by the server, and turns it into an array
+	// takes the string field in ServerConnection, and puts it into a neat array
+	// has already replaced a version that does more error checking
+	// because fuck error checking
 	private static void parseBoardState() {
 		String boardLine = LarsServer.boardState;
-
 		// loop through last 9 chars in the line from server
 		for (int i = 0; i < boardLine.length() - 9; i++ ) {
 			char boardLineChar = boardLine.charAt(i+9);
 			boardState[i] = boardLineChar;
 		} // loop
 	} // parseBoardState */
+
 
 	// temporary drawing mechanism
 	private static void tempBoardDrawer() {

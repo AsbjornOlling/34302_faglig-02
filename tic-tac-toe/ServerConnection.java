@@ -59,13 +59,15 @@ public class ServerConnection {
 
 	// just send a passed integer to socket using printwriter
 	// TODO: probably add some error handling here - retry if not received, etc
-	public void playerMove(int space) {
+	public void sendPlayerMove(int space) {
 		outgoing.print(space+"\r\n");
 		outgoing.flush();
 		getNewState();
 	} // getNewState
 
-	public void getNewState(){
+	// reads two lines
+	// tbh maybe this should just be inside sendPlayerMove()
+	private void getNewState(){
 		try {
 			boardState = response.readLine();
 			gameState = response.readLine();
