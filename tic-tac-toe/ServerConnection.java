@@ -10,37 +10,30 @@
 
 public class ServerConnection {
 	
-	//Flags
-	private static InetAddress host; //The host adress
-	private static final int PORT; //The host port
-	public String startingPlayer;
-	public char[] boardState;
-	/*
-	 * States:
-	 * 0 = unresolves
-	 * 1 = player win
-	 * 2 = serverwin
-	 * 3 = tie
-	 */
-	public int winState;
+	// Flags
+	private static InetAddress host;  // The host adress
+	private static final int PORT;  // The host port
+	public String startingPlayer;  // Who starts 
+	public String boardState;  // What does the board look like now
+	public String winState;  // The line about win/lose or keep going
 	
-	//The constructor handling the server connection
+	// The constructor handling the server connection
 	public ServerConnect (String IP, int port) {
 
-		//Defining our flags
+		// Initializing our flags
 		PORT = port;
 		host = IP;
 		
-		//Run the method to access the server
+		// Run the method to access the server
 		accessServer();
 	}
 	
 	public static void accessServer() {
 		
-		//Variable for link
+		// Variable for link
 		Socket link = null;
 		
-		//Error handling for link
+		// Error handling for link
 		try
 		{
 			link = new Socket(host,PORT);
