@@ -3,35 +3,50 @@
  */
 
 public class AI {
-	private static final int MAX_DEPTH = 3;
+	private static final int MAX_DEPTH = 1;
 	private static final char PLAYER = 'X';
 	private static final char OPPONENT = 'O';
+	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) {
-		char[] aBoard = {'.','.','o',
-										 '.','.','o',
-										 'o','o','.'};
+		char[] aBoard = {'.','.','.',
+										 '.','X','.',
+										 '.','X','O'};
 		System.out.println(makeMove(aBoard)+"");
+		//System.out.println(checkForWin(aBoard, OPPONENT));
 	}
 
 	public static int makeMove(char[] board) {
-		int bestMoveScore = -1000; // easy to beat
+		int bestMoveScore = -999; // easy to beat
 		int bestMove = 999; // obviousy wrong
+
+		// go through every possible move
 		for (int i = 0; i < board.length; i++) {
 			if (board[i] == '.') {
+
+				if (DEBUG) System.out.println("Evaluating position "+i+" for Player "+PLAYER);
+
 				// make modified board
 				char[] newBoard = board;
 				newBoard[i] = PLAYER;
 
-				// check for win and run recursive method
+				// evaluate this position
+				// if there wasn't an immediate win,
+				// start recursive lookahead
 				int thisScore = 0;
 				if (checkForWin(board,PLAYER)) {
 					thisScore += 10;
+				} else { // start recursive lookahead
+					if (DEBUG) System.out.println("Starting recursive lookahead on positition "+i);
+					thisScore = evaluateBoard(newBoard,OPPONENT,0);
+					if (DEBUG) System.out.println("Evaluated position "+i+" to a total of "+thisScore+" points.");
 				}
-				if ( thisScore + evaluateBoard(newBoard,OPPONENT,0) > bestMoveScore){
+
+				// is this the best move so far?
+				if (thisScore > bestMoveScore) {
 					bestMove = i;
 				}
-			}		
+			}	// fi
 		} // loop
 		return bestMove;
 	} // makeMove
@@ -48,6 +63,8 @@ public class AI {
 
 		for (int i = 0; i < passedBoard.length; i++) {
 			if (passedBoard[i] == '.') {
+
+				if (DEBUG) System.out.println("Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
 
 				// make new modified board
 				char[] newBoard = passedBoard;
@@ -83,6 +100,7 @@ public class AI {
 		(board[0] == player && board[4] == player && board[8] == player) ||
 		(board[2] == player && board[4] == player && board[6] == player) 
 	 	) {
+			if (DEBUG) System.out.println("Found win for "+player);
 			return true;
 		} else  {
 			return false;
