@@ -3,15 +3,15 @@
  */
 
 public class AI {
-	private static final int MAX_DEPTH = 1;
+	private static final int MAX_DEPTH = 4;
 	private static final char PLAYER = 'X';
 	private static final char OPPONENT = 'O';
 	private static final boolean DEBUG = true;
 
 	public static void main(String[] args) {
-		char[] aBoard = {'.','.','.',
-										 '.','X','.',
-										 '.','X','O'};
+		char[] aBoard = {'X','O','X',
+										 'X','O','X',
+										 'O','X','O'};
 		System.out.println(makeMove(aBoard)+"");
 		//System.out.println(checkForWin(aBoard, OPPONENT));
 	}
