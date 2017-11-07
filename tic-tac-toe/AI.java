@@ -6,14 +6,15 @@ public class AI {
 	private static final int MAX_DEPTH = 4;
 	private static final char PLAYER = 'X';
 	private static final char OPPONENT = 'O';
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
-		char[] aBoard = {'X','O','X',
+		/* char[] aBoard = {'X','O','X',
 										 'X','O','X',
 										 'O','X','O'};
-		System.out.println(makeMove(aBoard)+"");
+		// System.out.println(makeMove(aBoard)+"");
 		//System.out.println(checkForWin(aBoard, OPPONENT));
+		//*/
 	}
 
 	public static int makeMove(char[] board) {
@@ -51,7 +52,7 @@ public class AI {
 				if (DEBUG) System.out.println("");
 			}	// fi
 		} // loop
-		return bestMove;
+		return bestMove + 1; // +1 because lars' board is not index 0
 	} // makeMove
 
 	public static int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {

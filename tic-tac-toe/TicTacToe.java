@@ -23,14 +23,24 @@ import java.util.Scanner;
 
 public class TicTacToe {
 	private static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
+	private static int playerMove;
 	private static char playerSymbol;
 	private static ServerConnection LarsServer;
 	private static Scanner console = new Scanner(System.in);
 
 	public static void main(String[] args) {
+		System.out.println("SHALL WE PLAY A GAME?");
 
 		// instantiate connection object
 		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
+
+		// ai or human play?
+		String AIresponse = null;
+		do {
+			System.out.print("\nPlay yourself, or let the AI win over Lars?\n(SELF / AI): ");
+			AIresponse = console.nextLine().toUpperCase();
+		} while ( !(AIresponse.equals("AI") || AIresponse.equals("SELF")) );
+
 
 		// insert extra server move, if serverstarts
 		playerSymbol = parsePlayerSymbol();
@@ -38,38 +48,53 @@ public class TicTacToe {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
 			parseBoardState();
 			tempBoardDrawer();
-		} else if ( playerSymbol == 'X' ) {
-			// do nothing, just start the while loop,
-			// where the player is first anyway.
-		} else {
+		} else if ( !(playerSymbol == 'X') ) {
 			throw new IllegalArgumentException("parseStartingPlayer() method returned funny value.");
 		}
+
 
 		// loop of player and server moves
 		while ( LarsServer.serverIsActive ) {
 
-			// get a valid move from the player
-			System.out.println("Now it's your turn, place a "+playerSymbol+".");
-			System.out.print("Choose a space to put it, numbers 0 - 9: ");
-			int playerMove = console.nextInt();
+			// get a move from the player or AI
+			if (AIresponse.equals("SELF")) {
+				playerMove = console.nextInt();
+				System.out.println("It's your turn again, place a "+playerSymbol+".");
+				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
+			} else if (AIresponse.equals("AI")) {
+				playerMove = AI.makeMove(boardState); // TODO make AI read directly from boardState field instead of passing it
+				boardState[playerMove - 1] = playerSymbol;
+				System.out.println("AI MOVES:");
+				tempBoardDrawer();
+			}
+
+			// ask player if the submitted move is correct
+			// hopefully this should only ever happen for human players
+			// but is useful to have outside above statement for debugging AI
 			while ( boardState[playerMove - 1] != '.' ) {
 				tempBoardDrawer();
-				System.out.println("That was an invalid move, try again.");
+				System.out.println(playerMove + " is an invalid move, try again.");
 				System.out.println("Choose a space to put it, numbers 0 - 9");
 				playerMove = console.nextInt();
 			}
 
-			// upload the move, and get new state
+			// upload the move, and read the new state
 			LarsServer.sendPlayerMove(playerMove);
 			parseBoardState();
 
-			// check for victory
+			//////////////////////
+			//IN CASE OF VICTORY//
+			//		BREAK LOOP    //
+			//////////////////////
 			if (! LarsServer.gameState.equals("YOUR TURN")) {
 				tempBoardDrawer();
 				System.out.println(LarsServer.gameState);
 				break;
+			} else {
+				System.out.println("LARS MOVES:");
+				tempBoardDrawer();
 			}
-			tempBoardDrawer();
+
 			
 		} // while loop
 	} // main
@@ -100,6 +125,7 @@ public class TicTacToe {
 
 	// temporary drawing mechanism
 	private static void tempBoardDrawer() {
+		// System.out.print("\n");
 		for (int i = 0; i < boardState.length; i++ ) {
 			System.out.print(boardState[i]);
 			if ((i+1) % 3 == 0) {
