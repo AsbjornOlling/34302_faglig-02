@@ -27,7 +27,7 @@ public class AI {
 				if (DEBUG) System.out.println("Evaluating position "+i+" for Player "+PLAYER);
 
 				// make modified board
-				char[] newBoard = board;
+				char[] newBoard = board.clone();
 				newBoard[i] = PLAYER;
 
 				// evaluate this position
@@ -45,7 +45,10 @@ public class AI {
 				// is this the best move so far?
 				if (thisScore > bestMoveScore) {
 					bestMove = i;
+					bestMoveScore = thisScore;
 				}
+
+				if (DEBUG) System.out.println("");
 			}	// fi
 		} // loop
 		return bestMove;
@@ -67,7 +70,7 @@ public class AI {
 				if (DEBUG) System.out.println("Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
 
 				// make new modified board
-				char[] newBoard = passedBoard;
+				char[] newBoard = passedBoard.clone();
 				newBoard[i] = currentPlayer;
 
 				// check for wins
