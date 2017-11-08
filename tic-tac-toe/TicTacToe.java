@@ -79,9 +79,8 @@ public class TicTacToe {
 					playerMove = console.nextInt();
 				}
 			} else if (AIresponse.equals("AI")) {
+				// get and set the move
 				playerMove = robot.makeMove(boardState);
-//				System.out.println("HAS THE BOARD GOT AI MVOE HERE");
-//				tempBoardDrawer();
 
 				if ( !CONTINUOUS ) {
 					// show board after AI move
@@ -90,7 +89,6 @@ public class TicTacToe {
 			}
 
 			// put player move into board state and print
-			// at this point, the boardstate is all fucked
 			boardState[playerMove - 1] = playerSymbol;
 			tempBoardDrawer();
 
@@ -112,6 +110,7 @@ public class TicTacToe {
 				tempBoardDrawer();
 
 				// if continuous flag is set, set up new game
+				// TODO: also-reconstruct ai
 				if ( CONTINUOUS ) {
 					LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102); // TODO put these value into fields or vars or SOMETHING
 					playerSymbol = parsePlayerSymbol();

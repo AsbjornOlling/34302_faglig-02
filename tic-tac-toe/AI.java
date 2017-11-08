@@ -5,12 +5,13 @@
 import java.util.ArrayList;
 
 public class AI {
-	private static final int MAX_DEPTH = 2;
+	private final int MAX_DEPTH = 4;
 	private final char PLAYER;
 	private final char OPPONENT;
 	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
+		/* works fine from here (last i checked)
 		char[] aBoard = {'X','.','X',
 										 'X','O','O',
 										 'O','X','O'};
@@ -26,7 +27,7 @@ public class AI {
 		if (this.PLAYER == 'X') this.OPPONENT = 'O';
 		else if (this.PLAYER == 'O') this.OPPONENT = 'X';
 		else {
-			this.OPPONENT = ' '; // TODO is this even necessary?
+			this.OPPONENT = ' '; // TODO is this line even necessary?
 			throw new IllegalArgumentException("Bad playerSymbol passed to AI constructor:" + playerSymbol);
 		}
 	} // constructor
@@ -44,9 +45,9 @@ public class AI {
 		int bestScore = 0;
 		int bestMove = 0;
 
-		String indent = " ";
+		String indent = "";
 		if (DEBUG) { // figure out indentation level for debuggin
-			for (int j = 0; j < depth; j++ ) indent+=" ";
+			for (int j = 0; j < depth; j++ ) indent+="   ";
 		}
 
 		// figure out who the other player is
@@ -58,25 +59,26 @@ public class AI {
 		}
 
 		// find the empty spaces on the board
+// NOTE - this list is testedly ok
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 		for (int i = 0; i < passedBoard.length; i++) {
-// System.out.println("BOARD: "+passedBoard[i]); // extraordinary debug
 			if (passedBoard[i] == '.') {
-// System.out.println("I: "+i); // extraordinary debug
-// System.out.println("BOARD: "+passedBoard[i]); // extraordinary debug
 				validMoves.add(i);
 			}
 		} // loop
 
-		// return 0,0 if there are no empty spots
-		// TODO consider if better to return invalid values?
+		// return a bogus value if there are no empty spots
+		// TODO is this dumb? 
 		if (validMoves.size() == 0) {
 			if (DEBUG) System.out.println(indent+"Board filled.");
-			return new int[2];
+			int[] aTempValue = new int[2];
+			aTempValue[1] = 9999;
+			return aTempValue; 
 		}	
 
 		//for (int i = 0; i < validMoves.size(); i++) {
 		// go through valid moves
+// NOTE - this loop only tests actual valid moves
 		for (int i : validMoves) {
 
 			// print indented debug line
@@ -95,7 +97,7 @@ public class AI {
 				thisScore += 10;
 			} else if ( checkForWin(newBoard,OPPONENT) ) {
 				thisScore -= 10;
-			} else if ( depth < MAX_DEPTH ){ // check recursively if no win
+			} else if ( depth < MAX_DEPTH ){ // look ahead if the game hasn't ended from the move
 				thisScore += evaluateBoard(newBoard, otherPlayer, depth + 1)[0];
 			}
 
@@ -110,7 +112,9 @@ public class AI {
 		} // loop
 
 		// assemble returnvalue
-		int[] returnValue = {bestScore, bestMove + 1};
+		int [] returnValue = {bestScore, bestMove + 1};
+		System.out.println("RETURNING: "+returnValue[0]+' '+returnValue[1]);
+// NOTE - this is returning {0,1} a lot of the time
 		return returnValue;
 	} // evaluateBoard
 
