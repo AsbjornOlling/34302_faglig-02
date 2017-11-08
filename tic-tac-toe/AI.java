@@ -3,24 +3,28 @@
  */
 
 public class AI {
-	private static final int MAX_DEPTH = 4;
+	private static final int MAX_DEPTH = 20;
 	private static final char PLAYER = 'X';
 	private static final char OPPONENT = 'O';
 	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
-		/* char[] aBoard = {'X','O','X',
-										 'X','O','X',
+		/*
+		char[] aBoard = {'X','X','.',
+										 '.','O','.',
 										 'O','X','O'};
-		// System.out.println(makeMove(aBoard)+"");
+
+
+		System.out.println(makeMove()+"");
 		//System.out.println(checkForWin(aBoard, OPPONENT));
 		//*/
 	}
 
-	public static int makeMove(char[] board) {
+	public static int makeMove() {
+		char[] board = TicTacToe.boardState;
 		int bestMoveScore = -999; // easy to beat
 		int bestMove = 999; // obviousy wrong
-
+		
 		// go through every possible move
 		for (int i = 0; i < board.length; i++) {
 			if (board[i] == '.') {
@@ -52,13 +56,14 @@ public class AI {
 				if (DEBUG) System.out.println("");
 			}	// fi
 		} // loop
+		if (DEBUG) System.out.println("Determinted position "+bestMove+" to be the best move.");
 		return bestMove + 1; // +1 because lars' board is not index 0
 	} // makeMove
 
 	public static int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
 		int returnValue = 0;
-		char otherPlayer = ' ';
 
+		char otherPlayer = ' ';
 		if ( currentPlayer == 'X' ) {
 			otherPlayer = 'O';
 		} else if ( currentPlayer == 'O' ) {
@@ -68,7 +73,13 @@ public class AI {
 		for (int i = 0; i < passedBoard.length; i++) {
 			if (passedBoard[i] == '.') {
 
-				if (DEBUG) System.out.println("Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
+				if (DEBUG) {
+					String indent = " ";
+					for (int j = 0; j < depth; j++ ) {
+						indent+=" "	;
+					}
+					System.out.println(indent+"Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
+				};
 
 				// make new modified board
 				char[] newBoard = passedBoard.clone();

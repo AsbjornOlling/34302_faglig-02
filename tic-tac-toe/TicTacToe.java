@@ -25,6 +25,7 @@ public class TicTacToe {
 	public static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
 	private static int playerMove;
 	private static char playerSymbol;
+	private static final boolean CONTINUOUS = true;
 
 	// maybe just make these variables instead of fields
 	private static ServerConnection LarsServer;
@@ -72,12 +73,14 @@ public class TicTacToe {
 					playerMove = console.nextInt();
 				}
 			} else if (AIresponse.equals("AI")) {
-				System.out.println("AI MOVES:");
 				playerMove = AI.makeMove(); // TODO make AI read directly from boardState field instead of passing it
-
-				// show board after AI move
 				boardState[playerMove - 1] = playerSymbol;
-				tempBoardDrawer();
+
+				if ( !CONTINUOUS ) {
+					// show board after AI move
+					System.out.println("AI MOVES:");
+					tempBoardDrawer();
+				}
 			}
 
 
@@ -92,15 +95,25 @@ public class TicTacToe {
 			if (! LarsServer.gameState.equals("YOUR TURN")) {
 				System.out.println(LarsServer.gameState);
 				tempBoardDrawer();
-				break;
+				if ( CONTINUOUS ) {
+					LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102); // TODO put these value into fields or vars or SOMETHING
+					playerSymbol = parsePlayerSymbol();
+					parseBoardState();
+				} else {
+					break;
+				};
 			} else {
-				System.out.println("LARS MOVES:");
-				tempBoardDrawer();
+				if ( !CONTINUOUS ) {
+					// show board after AI move
+					System.out.println("LARS MOVES:");
+					tempBoardDrawer();
+				}
 			}
 
 			
 		} // while loop
 	} // main
+
 
 
 	// parse starting player line from field in connection object
