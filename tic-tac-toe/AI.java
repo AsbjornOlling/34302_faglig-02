@@ -2,8 +2,10 @@
  * Asbjørns failsome attempt at AI
  */
 
+import java.util.ArrayList;
+
 public class AI {
-	private static final int MAX_DEPTH = 4;
+	private static final int MAX_DEPTH = 2;
 	private final char PLAYER;
 	private final char OPPONENT;
 	private static final boolean DEBUG = false;
@@ -31,7 +33,7 @@ public class AI {
 		}
 	} // constructor
 
-
+	// returns a best move in range [1;9[
 	public int makeMove() {
 		char[] board = TicTacToe.boardState;
 		int bestMoveScore = -999; // easy to beat
@@ -65,16 +67,30 @@ public class AI {
 					bestMoveScore = thisScore;
 				}
 
-				if (DEBUG) System.out.println("");
+				if (DEBUG) System.out.print("\n");
 			}	// fi
 		} // loop
 		if (DEBUG) System.out.println("Determinted position "+bestMove+" to be the best move.");
 		return bestMove + 1; // +1 because lars' board is not index 0
 	} // makeMove
 
-	public int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
-		int returnValue = 0;
 
+	// TODO - try and put all of makeMove's functionality into one function
+	// 		find return highest / lowest return move (depending on player)
+	//		
+	// ? initally called with the real board
+	// ? returns a field and a value?
+	private int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
+		// init ALL THE VARS
+		int bestScore = 0;
+		int bestMove = 0;
+
+		String indent = " ";
+		if (DEBUG) { // figure out indentation level for debuggin
+			for (int j = 0; j < depth; j++ ) indent+=" ";
+		}
+
+		// figure out who the other player is
 		char otherPlayer = ' ';
 		if ( currentPlayer == 'X' ) {
 			otherPlayer = 'O';
@@ -82,37 +98,53 @@ public class AI {
 			otherPlayer = 'X';
 		}
 
-		// TODO - find the lowest possible move if simulating opponent
+		// find the empty spaces on the board
+		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 		for (int i = 0; i < passedBoard.length; i++) {
-			// TODO: return 0 if there are no empty spots
 			if (passedBoard[i] == '.') {
-
-				if (DEBUG) {
-					String indent = " ";
-					for (int j = 0; j < depth; j++ ) {
-						indent+=" "	;
-					}
-					System.out.println(indent+"Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
-				};
-
-				// make new modified board
-				char[] newBoard = passedBoard.clone();
-				newBoard[i] = currentPlayer;
-
-				// check for wins
-				if ( checkForWin(newBoard,PLAYER) ) {
-					returnValue += 10;
-				} else if ( checkForWin(newBoard,OPPONENT) ) {
-					returnValue -= 10;
-				} else if ( depth < MAX_DEPTH ){
-					depth++;
-					returnValue += evaluateBoard(newBoard,otherPlayer,depth);
-				}
+				validMoves.add(i);
 			}
 		} // loop
 
-		return returnValue;
-	}
+		// return 0 if there are no empty spots
+		if (validMoves.size() == 0) {
+			if (DEBUG) System.out.println(indent+"Board filled.");
+			return 0;
+		}	
+
+		// TODO - keep going until highest / lowest value found
+		for (int i = 0; i < validMoves.size(); i++) {
+
+				// print indented debug line
+				if (DEBUG) {
+					System.out.println(indent+"Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
+				}
+
+				// make new based on the move
+				char[] newBoard = passedBoard.clone();
+				newBoard[i] = currentPlayer;
+
+				// check for wins, generate score
+				int thisScore = 0;
+				if ( checkForWin(newBoard,PLAYER) ) {
+					thisScore += 10;
+				} else if ( checkForWin(newBoard,OPPONENT) ) {
+					thisScore -= 10;
+				} else if ( depth < MAX_DEPTH ){
+					depth++;
+					thisScore += evaluateBoard(newBoard,otherPlayer,depth);
+				}
+
+				// check if this is the best score, relative to whose turn it is
+				if ( currentPlayer == PLAYER && thisScore > bestScore ) {
+					bestScore = thisScore;
+				} else if ( currentPlayer == OPPONENT && thisScore < bestScore ) {
+					bestScore = thisScore;
+				}
+		} // loop
+
+		return bestScore;
+	} // evaluateBoard
 
 	public static boolean checkForWin(char[] board, char player){
 
