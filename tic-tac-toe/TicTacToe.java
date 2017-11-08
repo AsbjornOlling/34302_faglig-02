@@ -48,8 +48,6 @@ public class TicTacToe {
 		playerSymbol = parsePlayerSymbol();
 		if ( playerSymbol == 'O' ) {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
-			parseBoardState();
-			tempBoardDrawer();
 		} else if ( !(playerSymbol == 'X') ) {
 			throw new IllegalArgumentException("parseStartingPlayer() method returned funny value.");
 		}
@@ -59,59 +57,69 @@ public class TicTacToe {
 			robot = new AI(playerSymbol);
 		}
 
+		// print initial board, before start
+		parseBoardState();
+		tempBoardDrawer();
+
 		// loop of player and server moves
 		while ( LarsServer.serverIsActive ) {
 
+
+			// TODO this block has redundant code - could be leaner
 			// get a move from the player or AI
 			if (AIresponse.equals("SELF")) {
-				playerMove = console.nextInt();
 				System.out.println("It's your turn, place a "+playerSymbol+".");
 				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
+				playerMove = console.nextInt();
 
 				// if the given move was invalid
 				while ( boardState[playerMove - 1] != '.' || !(playerMove >= 1 && playerMove <=9) ) {
-					tempBoardDrawer();
 					System.out.println(playerMove + " is an invalid move, try again.");
 					System.out.println("Choose a space to put it, numbers 0 - 9");
 					playerMove = console.nextInt();
 				}
 			} else if (AIresponse.equals("AI")) {
-				playerMove = robot.makeMove();
-				boardState[playerMove - 1] = playerSymbol;
+				playerMove = robot.makeMove(boardState);
+//				System.out.println("HAS THE BOARD GOT AI MVOE HERE");
+//				tempBoardDrawer();
 
 				if ( !CONTINUOUS ) {
 					// show board after AI move
-					System.out.println("AI MOVES:");
-					tempBoardDrawer();
+					System.out.println("AI MOVES: "+playerMove);
 				}
 			}
 
+			// put player move into board state and print
+			// at this point, the boardstate is all fucked
+			boardState[playerMove - 1] = playerSymbol;
+			tempBoardDrawer();
+
 			// upload the move, and read the new state
 			LarsServer.sendPlayerMove(playerMove);
-			parseBoardState();
 
-			//////////////////////
-			//IN CASE OF VICTORY//
-			//		BREAK LOOP    //
-			//////////////////////
+			// now we have lars' move
+			System.out.println("LARS MOVES:");
+			parseBoardState();
+			tempBoardDrawer();
+			
+
+			///////////////////////
+			//IN CASE OF GAMEOVER//
+			//		BREAK LOOP     //
+			///////////////////////
 			if (! LarsServer.gameState.equals("YOUR TURN")) {
 				System.out.println(LarsServer.gameState);
 				tempBoardDrawer();
+
+				// if continuous flag is set, set up new game
 				if ( CONTINUOUS ) {
 					LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102); // TODO put these value into fields or vars or SOMETHING
 					playerSymbol = parsePlayerSymbol();
 					parseBoardState();
 				} else {
 					break;
-				};
-			} else {
-				if ( !CONTINUOUS ) {
-					// show board after AI move
-					System.out.println("LARS MOVES:");
-					tempBoardDrawer();
 				}
 			}
-
 			
 		} // while loop
 	} // main
@@ -133,6 +141,12 @@ public class TicTacToe {
 	// because fuck error checking
 	private static void parseBoardState() {
 		String boardLine = LarsServer.boardState;
+
+		// SOME error handlign
+		if (boardLine.length() != 18) {
+			throw new IllegalArgumentException("Read bad boardLine from server: "+boardLine);
+		}
+
 		// loop through last 9 chars in the line from server
 		for (int i = 0; i < boardLine.length() - 9; i++ ) {
 			char boardLineChar = boardLine.charAt(i+9);

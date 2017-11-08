@@ -11,16 +11,14 @@ public class AI {
 	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
-		/*
-		char[] aBoard = {'X','X','.',
-										 '.','O','.',
+		char[] aBoard = {'X','.','X',
+										 'X','O','O',
 										 'O','X','O'};
-
-
-		System.out.println(makeMove()+"");
-		//System.out.println(checkForWin(aBoard, OPPONENT));
+		AI robot = new AI('X');
+		System.out.println(robot.makeMove(aBoard));
 		//*/
 	}
+
 
 	public AI(char playerSymbol) {
 		// set player symbols for the game
@@ -28,59 +26,20 @@ public class AI {
 		if (this.PLAYER == 'X') this.OPPONENT = 'O';
 		else if (this.PLAYER == 'O') this.OPPONENT = 'X';
 		else {
-			this.OPPONENT = ' ';
+			this.OPPONENT = ' '; // TODO is this even necessary?
 			throw new IllegalArgumentException("Bad playerSymbol passed to AI constructor:" + playerSymbol);
 		}
 	} // constructor
 
 	// returns a best move in range [1;9[
-	public int makeMove() {
-		char[] board = TicTacToe.boardState;
-		int bestMoveScore = -999; // easy to beat
-		int bestMove = 999; // obviousy wrong
-		
-		// go through every possible move
-		for (int i = 0; i < board.length; i++) {
-			if (board[i] == '.') {
-
-				if (DEBUG) System.out.println("Evaluating position "+i+" for Player "+PLAYER);
-
-				// make modified board
-				char[] newBoard = board.clone();
-				newBoard[i] = PLAYER;
-
-				// evaluate this position
-				// if there wasn't an immediate win,
-				// start recursive lookahead
-				int thisScore = 0;
-				if (checkForWin(board,PLAYER)) {
-					thisScore += 10;
-				} else { // start recursive lookahead
-					if (DEBUG) System.out.println("Starting recursive lookahead on positition "+i);
-					thisScore = evaluateBoard(newBoard,OPPONENT,1);
-					if (DEBUG) System.out.println("Evaluated position "+i+" to a total of "+thisScore+" points.");
-				}
-
-				// is this the best move so far?
-				if (thisScore > bestMoveScore) {
-					bestMove = i;
-					bestMoveScore = thisScore;
-				}
-
-				if (DEBUG) System.out.print("\n");
-			}	// fi
-		} // loop
-		if (DEBUG) System.out.println("Determinted position "+bestMove+" to be the best move.");
-		return bestMove + 1; // +1 because lars' board is not index 0
+	public int makeMove(char[] board) {
+		return evaluateBoard(board, PLAYER, 0)[1];
 	} // makeMove
 
-
-	// TODO - try and put all of makeMove's functionality into one function
-	// 		find return highest / lowest return move (depending on player)
-	//		
-	// ? initally called with the real board
-	// ? returns a field and a value?
-	private int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
+	
+	// recursive minmax algorithm for finding the best move
+	// returns array {bestScore,bestMove}
+	private int[] evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
 		// init ALL THE VARS
 		int bestScore = 0;
 		int bestMove = 0;
@@ -101,53 +60,61 @@ public class AI {
 		// find the empty spaces on the board
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 		for (int i = 0; i < passedBoard.length; i++) {
+// System.out.println("BOARD: "+passedBoard[i]); // extraordinary debug
 			if (passedBoard[i] == '.') {
+// System.out.println("I: "+i); // extraordinary debug
+// System.out.println("BOARD: "+passedBoard[i]); // extraordinary debug
 				validMoves.add(i);
 			}
 		} // loop
 
-		// return 0 if there are no empty spots
+		// return 0,0 if there are no empty spots
+		// TODO consider if better to return invalid values?
 		if (validMoves.size() == 0) {
 			if (DEBUG) System.out.println(indent+"Board filled.");
-			return 0;
+			return new int[2];
 		}	
 
-		// TODO - keep going until highest / lowest value found
-		for (int i = 0; i < validMoves.size(); i++) {
+		//for (int i = 0; i < validMoves.size(); i++) {
+		// go through valid moves
+		for (int i : validMoves) {
 
-				// print indented debug line
-				if (DEBUG) {
-					System.out.println(indent+"Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
-				}
+			// print indented debug line
+			if (DEBUG) {
+				System.out.println(indent+"Depth = "+depth+" Evaluating position "+i+" for Player "+currentPlayer);
+			}
 
-				// make new based on the move
-				char[] newBoard = passedBoard.clone();
-				newBoard[i] = currentPlayer;
+			// make new based on the move
+			char[] newBoard = passedBoard.clone();
+			newBoard[i] = currentPlayer;
+			
 
-				// check for wins, generate score
-				int thisScore = 0;
-				if ( checkForWin(newBoard,PLAYER) ) {
-					thisScore += 10;
-				} else if ( checkForWin(newBoard,OPPONENT) ) {
-					thisScore -= 10;
-				} else if ( depth < MAX_DEPTH ){
-					depth++;
-					thisScore += evaluateBoard(newBoard,otherPlayer,depth);
-				}
+			// check for wins, generate score for this move
+			int thisScore = 0;
+			if ( checkForWin(newBoard,PLAYER) ) {
+				thisScore += 10;
+			} else if ( checkForWin(newBoard,OPPONENT) ) {
+				thisScore -= 10;
+			} else if ( depth < MAX_DEPTH ){ // check recursively if no win
+				thisScore += evaluateBoard(newBoard, otherPlayer, depth + 1)[0];
+			}
 
-				// check if this is the best score, relative to whose turn it is
-				if ( currentPlayer == PLAYER && thisScore > bestScore ) {
-					bestScore = thisScore;
-				} else if ( currentPlayer == OPPONENT && thisScore < bestScore ) {
-					bestScore = thisScore;
-				}
+			// check if this move is best score (relative to whose turn it is)
+			if ( currentPlayer == PLAYER && thisScore > bestScore ) {
+				bestScore = thisScore;
+				bestMove = i;
+			} else if ( currentPlayer == OPPONENT && thisScore < bestScore ) {
+				bestScore = thisScore;
+				bestMove = i;
+			}
 		} // loop
 
-		return bestScore;
+		// assemble returnvalue
+		int[] returnValue = {bestScore, bestMove + 1};
+		return returnValue;
 	} // evaluateBoard
 
 	public static boolean checkForWin(char[] board, char player){
-
 		if (
 		// horizontal wins
 		(board[0] == player && board[1] == player && board[2] == player) ||
