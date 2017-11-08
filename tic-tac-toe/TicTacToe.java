@@ -65,7 +65,7 @@ public class TicTacToe {
 				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
 
 				// if the given move was invalid
-				while ( boardState[playerMove - 1] != '.' ) {
+				while ( boardState[playerMove - 1] != '.' || !(playerMove >= 1 && playerMove <=9) ) {
 					tempBoardDrawer();
 					System.out.println(playerMove + " is an invalid move, try again.");
 					System.out.println("Choose a space to put it, numbers 0 - 9");
