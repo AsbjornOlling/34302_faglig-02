@@ -4,8 +4,8 @@
 
 public class AI {
 	private static final int MAX_DEPTH = 4;
-	private static final char PLAYER = 'X';
-	private static final char OPPONENT = 'O';
+	private final char PLAYER;
+	private final char OPPONENT;
 	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
@@ -20,14 +20,25 @@ public class AI {
 		//*/
 	}
 
-	public static int makeMove() {
+	public AI(char playerSymbol) {
+		// set player symbols for the game
+		this.PLAYER = playerSymbol;
+		if (this.PLAYER == 'X') this.OPPONENT = 'O';
+		else if (this.PLAYER == 'O') this.OPPONENT = 'X';
+		else {
+			this.OPPONENT = ' ';
+			throw new IllegalArgumentException("Bad playerSymbol passed to AI constructor:" + playerSymbol);
+		}
+	} // constructor
+
+
+	public int makeMove() {
 		char[] board = TicTacToe.boardState;
 		int bestMoveScore = -999; // easy to beat
 		int bestMove = 999; // obviousy wrong
 		
 		// go through every possible move
 		for (int i = 0; i < board.length; i++) {
-			// TODO: return 0 if there are no empty spots and no wins
 			if (board[i] == '.') {
 
 				if (DEBUG) System.out.println("Evaluating position "+i+" for Player "+PLAYER);
@@ -61,7 +72,7 @@ public class AI {
 		return bestMove + 1; // +1 because lars' board is not index 0
 	} // makeMove
 
-	public static int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
+	public int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
 		int returnValue = 0;
 
 		char otherPlayer = ' ';
@@ -71,7 +82,9 @@ public class AI {
 			otherPlayer = 'X';
 		}
 
+		// TODO - find the lowest possible move if simulating opponent
 		for (int i = 0; i < passedBoard.length; i++) {
+			// TODO: return 0 if there are no empty spots
 			if (passedBoard[i] == '.') {
 
 				if (DEBUG) {

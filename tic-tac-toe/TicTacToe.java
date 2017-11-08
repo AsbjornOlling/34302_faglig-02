@@ -9,13 +9,9 @@
  * Blame Asbjørn for any and all faults.
  */
 
-// fra david
-// String boardState
-// String startingPlayer
-// String gameState
-
-// UI flow for player interaction is not perfect
-// see especially near the end game
+// UI flow for human player mode is not perfect
+// see especially end game scenarios
+// TODO fix ^
 
 import java.util.Scanner;
 
@@ -23,11 +19,17 @@ public class TicTacToe {
 	public static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
 	private static int playerMove;
 	private static char playerSymbol;
+
+	// hardcoded variable for now
+	// allows the ai to continuously play new games against lars
+	// log level is lower if continuous
+	// TODO: add timer, print lines  with wins/loss ratio
 	private static final boolean CONTINUOUS = false;
 
-	// maybe just make these variables instead of fields
+	// TODO maybe just make these variables instead of fields
 	private static ServerConnection LarsServer;
 	private static Scanner console = new Scanner(System.in);
+	private static AI robot; // for some reason this can't be declared inside a conditional
 
 	public static void main(String[] args) {
 		System.out.println("SHALL WE PLAY A GAME?");
@@ -39,11 +41,10 @@ public class TicTacToe {
 			AIresponse = console.nextLine().toUpperCase();
 		} while ( !(AIresponse.equals("AI") || AIresponse.equals("SELF")) );
 
-
-		// instantiate connection object
+		// instantiate appropriate object
 		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
 
-		// insert extra server move, if serverstarts
+		// insert extra server move, if server starts
 		playerSymbol = parsePlayerSymbol();
 		if ( playerSymbol == 'O' ) {
 			System.out.println("Staalhagen has the starting turn. Watch out!");
@@ -53,6 +54,10 @@ public class TicTacToe {
 			throw new IllegalArgumentException("parseStartingPlayer() method returned funny value.");
 		}
 
+		// instantiate AI
+		if (AIresponse.equals("AI")) {
+			robot = new AI(playerSymbol);
+		}
 
 		// loop of player and server moves
 		while ( LarsServer.serverIsActive ) {
@@ -60,7 +65,7 @@ public class TicTacToe {
 			// get a move from the player or AI
 			if (AIresponse.equals("SELF")) {
 				playerMove = console.nextInt();
-				System.out.println("It's your turn again, place a "+playerSymbol+".");
+				System.out.println("It's your turn, place a "+playerSymbol+".");
 				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
 
 				// if the given move was invalid
@@ -71,7 +76,7 @@ public class TicTacToe {
 					playerMove = console.nextInt();
 				}
 			} else if (AIresponse.equals("AI")) {
-				playerMove = AI.makeMove(); // TODO make AI read directly from boardState field instead of passing it
+				playerMove = robot.makeMove();
 				boardState[playerMove - 1] = playerSymbol;
 
 				if ( !CONTINUOUS ) {
@@ -80,7 +85,6 @@ public class TicTacToe {
 					tempBoardDrawer();
 				}
 			}
-
 
 			// upload the move, and read the new state
 			LarsServer.sendPlayerMove(playerMove);
