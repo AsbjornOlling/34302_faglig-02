@@ -22,9 +22,11 @@
 import java.util.Scanner;
 
 public class TicTacToe {
-	private static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
+	public static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
 	private static int playerMove;
 	private static char playerSymbol;
+
+	// maybe just make these variables instead of fields
 	private static ServerConnection LarsServer;
 	private static Scanner console = new Scanner(System.in);
 
@@ -61,22 +63,23 @@ public class TicTacToe {
 				playerMove = console.nextInt();
 				System.out.println("It's your turn again, place a "+playerSymbol+".");
 				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
+
+				// if the given move was invalid
+				while ( boardState[playerMove - 1] != '.' ) {
+					tempBoardDrawer();
+					System.out.println(playerMove + " is an invalid move, try again.");
+					System.out.println("Choose a space to put it, numbers 0 - 9");
+					playerMove = console.nextInt();
+				}
 			} else if (AIresponse.equals("AI")) {
-				playerMove = AI.makeMove(boardState); // TODO make AI read directly from boardState field instead of passing it
-				boardState[playerMove - 1] = playerSymbol;
 				System.out.println("AI MOVES:");
+				playerMove = AI.makeMove(); // TODO make AI read directly from boardState field instead of passing it
+
+				// show board after AI move
+				boardState[playerMove - 1] = playerSymbol;
 				tempBoardDrawer();
 			}
 
-			// ask player if the submitted move is correct
-			// hopefully this should only ever happen for human players
-			// but is useful to have outside above statement for debugging AI
-			while ( boardState[playerMove - 1] != '.' ) {
-				tempBoardDrawer();
-				System.out.println(playerMove + " is an invalid move, try again.");
-				System.out.println("Choose a space to put it, numbers 0 - 9");
-				playerMove = console.nextInt();
-			}
 
 			// upload the move, and read the new state
 			LarsServer.sendPlayerMove(playerMove);
@@ -87,8 +90,8 @@ public class TicTacToe {
 			//		BREAK LOOP    //
 			//////////////////////
 			if (! LarsServer.gameState.equals("YOUR TURN")) {
-				tempBoardDrawer();
 				System.out.println(LarsServer.gameState);
+				tempBoardDrawer();
 				break;
 			} else {
 				System.out.println("LARS MOVES:");
