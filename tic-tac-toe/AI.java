@@ -3,7 +3,7 @@
  */
 
 public class AI {
-	private static final int MAX_DEPTH = 20;
+	private static final int MAX_DEPTH = 4;
 	private static final char PLAYER = 'X';
 	private static final char OPPONENT = 'O';
 	private static final boolean DEBUG = false;
@@ -27,6 +27,7 @@ public class AI {
 		
 		// go through every possible move
 		for (int i = 0; i < board.length; i++) {
+			// TODO: return 0 if there are no empty spots and no wins
 			if (board[i] == '.') {
 
 				if (DEBUG) System.out.println("Evaluating position "+i+" for Player "+PLAYER);
@@ -43,7 +44,7 @@ public class AI {
 					thisScore += 10;
 				} else { // start recursive lookahead
 					if (DEBUG) System.out.println("Starting recursive lookahead on positition "+i);
-					thisScore = evaluateBoard(newBoard,OPPONENT,0);
+					thisScore = evaluateBoard(newBoard,OPPONENT,1);
 					if (DEBUG) System.out.println("Evaluated position "+i+" to a total of "+thisScore+" points.");
 				}
 

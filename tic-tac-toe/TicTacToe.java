@@ -14,10 +14,8 @@
 // String startingPlayer
 // String gameState
 
-// predominant bug:
-// clearly blank spaces are often invalid
-// when checking move validity
-
+// UI flow for player interaction is not perfect
+// see especially near the end game
 
 import java.util.Scanner;
 
@@ -25,7 +23,7 @@ public class TicTacToe {
 	public static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
 	private static int playerMove;
 	private static char playerSymbol;
-	private static final boolean CONTINUOUS = true;
+	private static final boolean CONTINUOUS = false;
 
 	// maybe just make these variables instead of fields
 	private static ServerConnection LarsServer;
@@ -34,9 +32,6 @@ public class TicTacToe {
 	public static void main(String[] args) {
 		System.out.println("SHALL WE PLAY A GAME?");
 
-		// instantiate connection object
-		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
-
 		// ai or human play?
 		String AIresponse = null;
 		do {
@@ -44,6 +39,9 @@ public class TicTacToe {
 			AIresponse = console.nextLine().toUpperCase();
 		} while ( !(AIresponse.equals("AI") || AIresponse.equals("SELF")) );
 
+
+		// instantiate connection object
+		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
 
 		// insert extra server move, if serverstarts
 		playerSymbol = parsePlayerSymbol();
