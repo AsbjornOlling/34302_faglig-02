@@ -9,9 +9,14 @@
  * Blame Asbjørn for any and all faults.
  */
 
+// TODO: 
 // UI flow for human player mode is not perfect
 // see especially end game scenarios
-// TODO fix ^
+
+// still *occasionally* makes an illegal move
+// like ever 100 games or so - why is this?
+// bug is most easily provokable in continous mode
+
 
 import java.util.Scanner;
 
