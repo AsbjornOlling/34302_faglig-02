@@ -16,15 +16,22 @@
 import java.util.Scanner;
 
 public class TicTacToe {
-	public static char[] boardState = {'.','.','.','.','.','.','.','.','.'};
+	private static char[] blankBoard = {'.','.','.','.','.','.','.','.','.'};
+	public static char[] boardState = blankBoard.clone();
+
 	private static int playerMove;
 	private static char playerSymbol;
 
-	// hardcoded variable for now
-	// allows the ai to continuously play new games against lars
-	// log level is lower if continuous
-	// TODO: add timer, print lines  with wins/loss ratio
-	private static final boolean CONTINUOUS = false;
+	private static int noOfWins;
+	private static int noOfTies;
+	private static int noOfLosses;
+
+	// whether AI is chosen
+	private static boolean AI_ON;
+
+	// CONINOUS allows the ai to continuously play new games against lars
+	// log level is lower if continuous - maybe this should be set-able in UI
+	private static final boolean CONTINUOUS = true;
 
 	// TODO maybe just make these variables instead of fields
 	private static ServerConnection LarsServer;
@@ -40,9 +47,13 @@ public class TicTacToe {
 			System.out.print("\nPlay yourself, or let the AI win over Lars?\n(SELF / AI): ");
 			AIresponse = console.nextLine().toUpperCase();
 		} while ( !(AIresponse.equals("AI") || AIresponse.equals("SELF")) );
+		// set field if chosen
+		if ( AIresponse.equals("AI") ) {
+			AI_ON = true;
+		} 
 
-		// instantiate appropriate object
-		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102);
+		// intantiate objects, fill out fields
+		startNewGame();
 
 		// insert extra server move, if server starts
 		playerSymbol = parsePlayerSymbol();
@@ -52,11 +63,6 @@ public class TicTacToe {
 			throw new IllegalArgumentException("parseStartingPlayer() method returned funny value.");
 		}
 
-		// instantiate AI
-		if (AIresponse.equals("AI")) {
-			robot = new AI(playerSymbol);
-		}
-
 		// print initial board, before start
 		parseBoardState();
 		tempBoardDrawer();
@@ -64,10 +70,9 @@ public class TicTacToe {
 		// loop of player and server moves
 		while ( LarsServer.serverIsActive ) {
 
-
 			// TODO this block has redundant code - could be leaner
 			// get a move from the player or AI
-			if (AIresponse.equals("SELF")) {
+			if (!AI_ON) {
 				System.out.println("It's your turn, place a "+playerSymbol+".");
 				System.out.print("Choose a space to put it, numbers 0 - 9: "); 
 				playerMove = console.nextInt();
@@ -78,51 +83,59 @@ public class TicTacToe {
 					System.out.println("Choose a space to put it, numbers 0 - 9");
 					playerMove = console.nextInt();
 				}
-			} else if (AIresponse.equals("AI")) {
+			} else if (AI_ON) {
 				// get and set the move
 				playerMove = robot.makeMove(boardState);
 
 				if ( !CONTINUOUS ) {
-					// show board after AI move
+					// show board after AI move set
 					System.out.println("AI MOVES: "+playerMove);
 				}
 			}
 
 			// put player move into board state and print
 			boardState[playerMove - 1] = playerSymbol;
-			tempBoardDrawer();
+			if (!CONTINUOUS) tempBoardDrawer();
 
 			// upload the move, and read the new state
 			LarsServer.sendPlayerMove(playerMove);
+			parseBoardState();
 
 			// now we have lars' move
-			System.out.println("LARS MOVES:");
-			parseBoardState();
-			tempBoardDrawer();
-			
+			if (!CONTINUOUS) {
+				System.out.println("LARS MOVES: ");
+				tempBoardDrawer();
+			}
+
 
 			///////////////////////
 			//IN CASE OF GAMEOVER//
 			//		BREAK LOOP     //
 			///////////////////////
-			if (! LarsServer.gameState.equals("YOUR TURN")) {
-				System.out.println(LarsServer.gameState);
-				tempBoardDrawer();
-
+			if ( !LarsServer.gameState.equals("YOUR TURN")) {
+				// TODO: odd bug - on player win, gameState line is actually boardState
 				// if continuous flag is set, set up new game
-				// TODO: also-reconstruct ai
 				if ( CONTINUOUS ) {
-					LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102); // TODO put these value into fields or vars or SOMETHING
-					playerSymbol = parsePlayerSymbol();
-					parseBoardState();
-				} else {
-					break;
-				}
-			}
-			
-		} // while loop
-	} // main
+					if ( LarsServer.gameState.equals("SERVER WINS") ) {
+						noOfLosses++;
+					} else if ( LarsServer.gameState.equals("NOBODY WINS") ) {
+						noOfTies++;
+					} else { // TODO: this is not very sure -make it more robust
+						noOfWins++;
+					}
+					System.out.println("Wins: "+noOfWins+" Losses: "+noOfLosses+" Ties: "+noOfTies);
+					startNewGame();
 
+				} else {
+					System.out.println(LarsServer.gameState);
+					tempBoardDrawer();
+					break; // exit loop
+				} 
+			} // consider it done.
+
+		} // while loop
+		// TODO do something if server loses connection
+	} // main
 
 
 	// parse starting player line from field in connection object
@@ -142,6 +155,7 @@ public class TicTacToe {
 		String boardLine = LarsServer.boardState;
 
 		// SOME error handlign
+		// this is where ILLEGALMOVE is caught
 		if (boardLine.length() != 18) {
 			throw new IllegalArgumentException("Read bad boardLine from server: "+boardLine);
 		}
@@ -154,6 +168,18 @@ public class TicTacToe {
 	} // parseBoardState */
 
 
+	private static void startNewGame() {
+		LarsServer = new ServerConnection("itkomsrv.fotonik.dtu.dk",1102); // TODO put these value into fields or vars or SOMETHING
+		playerSymbol = parsePlayerSymbol();
+		parseBoardState();
+		boardState = blankBoard.clone();
+		// instantiate AI
+		if ( AI_ON ) {
+			robot = new AI(playerSymbol);
+		}
+	} // startNewGame
+
+
 	// temporary drawing mechanism
 	private static void tempBoardDrawer() {
 		// System.out.print("\n");
@@ -163,6 +189,6 @@ public class TicTacToe {
 				System.out.print("\n");
 			}
 		} // loop
-	} // Board Drawer
+	} // BoardDrawer
 
 } // class

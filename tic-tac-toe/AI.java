@@ -2,17 +2,10 @@
  * Asbjørns failsome attempt at AI
  */
 
-// higher level function call on each validMove:
-// 1. return a value if terminal board state (win or full board)
-// 2. go through available spots on the board
-// 3. call recursively on every spot
-// 4. compare the results from each spot
-// 5. return the best of the spots, with its points
-
 import java.util.ArrayList;
 
 public class AI {
-	private final int MAX_DEPTH = 5;
+	private final int MAX_DEPTH = 100;
 	private final char PLAYER;
 	private final char OPPONENT;
 	private static final boolean DEBUG = false;
@@ -63,7 +56,6 @@ public class AI {
 				bestMove = i;	
 				bestScore = thisScore;
 			} 
-			
 		} // loop
 
 		if ( DEBUG ) System.out.println("Final move decision (index): " + bestMove);
@@ -77,8 +69,9 @@ public class AI {
 	// returns array {score,moveindex}
 	private int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
 
+		// figure out indentation level for debuggin prints
 		String indent = "";
-		if (DEBUG) { // figure out indentation level for debuggin
+		if (DEBUG) {
 			for (int j = 0; j < depth; j++ ) indent+="   ";
 		}
 		// print indented debug line
