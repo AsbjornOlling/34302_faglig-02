@@ -2,25 +2,33 @@
  * Asbjørns failsome attempt at AI
  */
 
+// higher level function call on each validMove:
+// 1. return a value if terminal board state (win or full board)
+// 2. go through available spots on the board
+// 3. call recursively on every spot
+// 4. compare the results from each spot
+// 5. return the best of the spots, with its points
+
 import java.util.ArrayList;
 
 public class AI {
 	private final int MAX_DEPTH = 5;
 	private final char PLAYER;
 	private final char OPPONENT;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
 		// works fine from here (last i checked)
 		char[] aBoard = {'O','.','X',
-										 'X','.','.',
-										 'X','O','O'};
+										 'X','.','X',
+										 '.','O','O'};
 		AI robot = new AI('X');
-		System.out.println("MOVE MADE::::::" +robot.makeMove(aBoard));
+		robot.makeMove(aBoard);
 		//*/
 	}
 
 
+	// constructor
 	public AI(char playerSymbol) {
 		// set player symbols for the game
 		this.PLAYER = playerSymbol;
@@ -32,24 +40,47 @@ public class AI {
 		}
 	} // constructor
 
+
+	// top level function
 	// returns a best move in range [1;9[
-	public int makeMove(char[] board) {
-		return evaluateBoard(board, PLAYER, 0)[1];
+	public int makeMove(char[] passedBoard) {
+		// get list of empty indexes
+		ArrayList<Integer> validMoves = getEmptyIndexes(passedBoard);
+
+		if ( DEBUG ) System.out.println("Checking moves for "+PLAYER+" at depth 0");
+
+		int bestMove = -1; // invalid move
+		int bestScore = -10; // lowest possible score
+		for ( int i : validMoves ) {
+
+			// make board based on the hypothetical move
+			char[] newBoard = passedBoard.clone();
+			newBoard[i] = PLAYER;
+
+			// check if this move is the best found so far
+			int thisScore = evaluateBoard(newBoard, OPPONENT, 1);
+			if ( thisScore > bestScore ) {
+				bestMove = i;	
+				bestScore = thisScore;
+			} 
+			
+		} // loop
+
+		if ( DEBUG ) System.out.println("Final move decision (index): " + bestMove);
+
+		// +1 to match board count starting on 1
+		return bestMove + 1;
 	} // makeMove
 
 	
 	// recursive minmax algorithm for finding the best move
-	// returns array {bestScore,bestMove}
-	private int[] evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
-		// impossible values default, so they stick out during debugging
-		int bestScore = 3;
-		int bestMove = 2;
+	// returns array {score,moveindex}
+	private int evaluateBoard(char[] passedBoard, char currentPlayer, int depth) {
 
 		String indent = "";
 		if (DEBUG) { // figure out indentation level for debuggin
 			for (int j = 0; j < depth; j++ ) indent+="   ";
 		}
-
 		// print indented debug line
 		if (DEBUG) System.out.println(indent+"Checking the moves for "+currentPlayer+" at depth: "+depth);
 
@@ -61,64 +92,55 @@ public class AI {
 			otherPlayer = 'X';
 		}
 
+		// get list of empty indexes
+		ArrayList<Integer> validMoves = getEmptyIndexes(passedBoard);
+		
+		// check for terminal gamestates, and break and return
+		if ( checkForWin(passedBoard, PLAYER) ) {
+			if ( DEBUG ) System.out.println(indent+"Found win for PLAYER");
+			return 10;
+		} else if ( checkForWin(passedBoard, OPPONENT) ) {
+			if ( DEBUG ) System.out.println(indent+"Found win for OPPONENT");
+			return -10;
+		} else if (validMoves.size() == 0) {
+			if ( DEBUG ) System.out.println(indent+"Found TIE");
+			return 0;
+		}
+
+		int bestScore = 0; // TODO change this to high if PLAYER, low if OPPONENT
+		for (int i : validMoves) {
+
+			// make board based on the hypothetical move
+			char[] newBoard = passedBoard.clone();
+			newBoard[i] = currentPlayer;
+
+			int thisScore = evaluateBoard(newBoard, otherPlayer, depth + 1);
+
+			// if OPPONENT finds a low score
+			// or PLAYER finds a high score
+			if ( ( thisScore > bestScore && currentPlayer == PLAYER ) || ( thisScore < bestScore && currentPlayer == OPPONENT ) ) {
+				bestScore = thisScore;
+			}
+		} // loop
+
+
+		if ( DEBUG ) System.out.println(indent+"Passing up score: "+bestScore);
+		return bestScore;
+	} // evaluateBoard
+
+	public ArrayList<Integer> getEmptyIndexes(char[] passedBoard) {
 		// find the empty spaces on the board
-// NOTE - this list is testedly ok
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 		for (int i = 0; i < passedBoard.length; i++) {
 			if (passedBoard[i] == '.') {
 				validMoves.add(i);
 			}
 		} // loop
-
-		// return a bogus value if there are no empty spots
-		// TODO is this dumb? 
-		if (validMoves.size() == 0) {
-			if (DEBUG) System.out.println(indent+"Board filled.");
-			int[] aTempValue = new int[2];
-			aTempValue[1] = 9999;
-			return aTempValue; 
-		}	
-
-		//for (int i = 0; i < validMoves.size(); i++) {
-		// go through valid moves
-// NOTE - this loop only tests actual valid moves
-		for (int i : validMoves) {
+		return validMoves;
+	} // getValidMoves
 
 
-			// make new board based on the hypothetical move
-			char[] newBoard = passedBoard.clone();
-			newBoard[i] = currentPlayer;
-			
-
-			// check for wins
-			int thisScore = 0;
-			if ( checkForWin(newBoard, currentPlayer) != 0 ) {
-				thisScore += checkForWin(newBoard, currentPlayer);
-			} else if ( depth < MAX_DEPTH ){ // look ahead if the move wasn't winning
-				if ( DEBUG ) System.out.println(indent+"NO WIN FOUND, RECURSING TO "+depth);
-				thisScore += evaluateBoard(newBoard, otherPlayer, depth + 1)[0];
-			} else {
-				if ( DEBUG ) System.out.println(indent+"MAXDEPTH REACHED: "+depth);
-			}
-
-			// check if this move is best score (relative to whose turn it is)
-			if ( currentPlayer == PLAYER && thisScore > bestScore ) {
-				bestScore = thisScore;
-				bestMove = i;
-			} else if ( currentPlayer == OPPONENT && thisScore < bestScore ) {
-				bestScore = thisScore;
-				bestMove = i;
-			}
-		} // loop
-
-		// assemble returnvalue
-		int [] returnValue = {bestScore, bestMove + 1};
-		if ( DEBUG ) System.out.println(indent+"RETURNING: "+returnValue[0]+' '+returnValue[1]);
-// NOTE - this is returning {0,1} a lot of the time
-		return returnValue;
-	} // evaluateBoard
-
-	public int checkForWin(char[] board, char player){
+	public boolean checkForWin(char[] board, char player){
 		if (
 		// horizontal wins
 		(board[0] == player && board[1] == player && board[2] == player) ||
@@ -133,19 +155,11 @@ public class AI {
 		(board[2] == player && board[4] == player && board[6] == player) 
 	 	) {
 
-			if (DEBUG) System.out.println("Found win for "+player);
-
-			int returnValue = 0;
-			if ( player == PLAYER ) {
-				returnValue = 10;
-			} else if ( player == OPPONENT ) {
-				returnValue = -10;
-			} 
-
-			return returnValue;
+			// if win
+			return true;
 		} else  {
 			// if no win
-			return 0;
+			return false;
 		}
 	} // checkForWin
 
