@@ -19,10 +19,10 @@ public class AI {
 
 	public static void main(String[] args) {
 		// works fine from here (last i checked)
-		char[] aBoard = {'O','.','X',
-										 'X','.','X',
-										 '.','O','O'};
-		AI robot = new AI('X');
+		char[] aBoard = {'O','.','O',
+										 '.','X','.',
+										 'X','X','O'};
+		AI robot = new AI('O');
 		robot.makeMove(aBoard);
 		//*/
 	}
@@ -50,7 +50,7 @@ public class AI {
 		if ( DEBUG ) System.out.println("Checking moves for "+PLAYER+" at depth 0");
 
 		int bestMove = -1; // invalid move
-		int bestScore = -10; // lowest possible score
+		int bestScore = -20; // lowest possible score
 		for ( int i : validMoves ) {
 
 			// make board based on the hypothetical move
