@@ -16,27 +16,31 @@ import java.io.*;
 
 
 public class ClientConnection {
+	boolean serverActive = true;
 	// socket fields
 	ServerSocket serverSocket;
 	Socket clientSocket;
+	
 
+	// TEMPORARY CODEBLOCK FOR DEBUGGIN
 	public static void main(String[] args){
 		ClientConnection connection = new ClientConnection(8080);
-		String request =connection.getNextRequest();
+		String request = connection.getNextRequest();
 		System.out.println(request);
 	} // main
 
+
 	// constructor
 	public ClientConnection(int port) {
-
 		try { // open serverSocket
 			serverSocket = new ServerSocket(port);
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not establish socket on port "+port);
 		} 
-
 	} // constructor
 
+
+	// wait for and return a request from browser
 	public String getNextRequest() {
 		BufferedReader input = null;
 		String request = null;
@@ -63,6 +67,6 @@ public class ClientConnection {
 		}
 
 		return request;
-	}
+	} //getNextRequest
 
 } // class
