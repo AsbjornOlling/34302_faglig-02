@@ -12,13 +12,12 @@ import java.net.*;
 public class WebServer {
 
 	public static void main(String[] args) {
-
 	
 	ClientConnection connection = new ClientConnection(8080);
 	
 	// receive requests as long as server is active
 	
-		while (ClientConnection.serverActive == true) {	
+		while (connection.serverActive == true) {	
 			
 			String returnValue = connection.getNextRequest();  
 		
