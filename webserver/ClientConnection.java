@@ -14,13 +14,11 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import java.io.*;
 
-
 public class ClientConnection {
 	boolean serverActive = true;
 	// socket fields
 	ServerSocket serverSocket;
 	Socket clientSocket;
-	
 
 	// TEMPORARY CODEBLOCK FOR DEBUGGIN
 	public static void main(String[] args){
@@ -53,7 +51,7 @@ public class ClientConnection {
 
 		try { // read one line from request
 			// read a line from the request
-			// TODO - allow to read multiple lines
+			// TODO - allow to read multiple lines of requeest
 			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
 			request = input.readLine();
 		} catch (IOException ioEx ) {
@@ -69,4 +67,23 @@ public class ClientConnection {
 		return request;
 	} //getNextRequest
 
+
+	// send a bytearray back
+	// TODO + headers
+	public void sendResponse(byte[] data) {
+		BufferedOutputStream output = null;
+
+		try { // to open output stream
+			output = new BufferedOutputStream(clientSocket.getOutputStream());
+		} catch (IOException ioEx) {
+			System.out.println("ERROR: Could not open outputstream to browser.");
+		}
+
+		try { // writing to outputstream
+			output.write(data);
+		} catch (IOException ioEx) {
+			System.out.println("ERROR: Could not write data to outputstream.");
+		}
+		
+	} // sendResponse
 } // class
