@@ -5,7 +5,7 @@
  * 
  */
 
-import java.io.BufferedReader;
+import java.io.*;
 
 public class RequestHandler {
 		
@@ -24,8 +24,6 @@ public class RequestHandler {
   			BufferedReader Fil = new BufferedReader ( new FileReader ("content" + URI) );
   			System.out.println(URI);
   		} catch (FileNotFoundException e){
-  		    System.out.println(e);
-  		} catch (IOException e){
   		    System.out.println(e);
   		}
   	}
