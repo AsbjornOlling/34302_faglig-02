@@ -5,7 +5,7 @@
 import java.util.ArrayList;
 
 public class AI {
-	private final int MAX_DEPTH = 100;
+	private final int MAX_DEPTH = 10000;
 	private final char PLAYER;
 	private final char OPPONENT;
 	private static final boolean DEBUG = false;
