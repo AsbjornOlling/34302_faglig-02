@@ -15,14 +15,18 @@ public class RequestHandler {
   	public static void Handler (String FirstLine) {
   		
   		//Variables
-  		String URI;
+  		String uri;
   		
   		//Metod handling
   		String[] split = FirstLine.split("\\s+");
-  		URI = split[1];
+  		uri = split[1];
+  		
+  		String[] dotArray = uri.split("[.]+");
+  		String ext = dotArray[dotArray.length - 1];
+  		System.out.println(ext);
   		try {
-  			BufferedReader Fil = new BufferedReader ( new FileReader ("content" + URI) );
-  			System.out.println(URI);
+  			BufferedReader fil = new BufferedReader ( new FileReader ("content" + uri) );
+  			System.out.println(uri);
   		} catch (FileNotFoundException e){
   		    System.out.println(e);
   		}
