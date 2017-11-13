@@ -10,7 +10,7 @@ public class RequestHandler {
   	//Fields
   	String status;
 
-  	public static Handler (String URI) {
+  	public static void Handler (String URI) {
   		String[] split = URI.split("\\s+");
   		System.out.println(split[1]);
  	}
