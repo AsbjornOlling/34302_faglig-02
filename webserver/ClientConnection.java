@@ -69,7 +69,7 @@ public class ClientConnection {
 
 
 	// send a bytearray back
-	// TODO + headers
+	// TODO write headers
 	public void sendResponse(byte[] data) {
 		BufferedOutputStream output = null;
 
@@ -79,11 +79,15 @@ public class ClientConnection {
 			System.out.println("ERROR: Could not open outputstream to browser.");
 		}
 
+		// TODO loop to send parts of file?
+
 		try { // writing to outputstream
 			output.write(data);
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not write data to outputstream.");
 		}
-		
+
+		// TODO close socket here
 	} // sendResponse
+
 } // class
