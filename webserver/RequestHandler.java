@@ -21,14 +21,12 @@ public class RequestHandler {
   		String[] split = FirstLine.split("\\s+");
   		URI = split[1];
   		try {
-  		BufferedReader Fil = new BufferedReader ("content" + URI);
-  		System.out.println(URI);
-  		catch (FileNotFoundException e){
+  			BufferedReader Fil = new BufferedReader ( new FileReader ("content" + URI) );
+  			System.out.println(URI);
+  		} catch (FileNotFoundException e){
   		    System.out.println(e);
-  		}
-  		catch (IOException e){
+  		} catch (IOException e){
   		    System.out.println(e);
-  		}
   		}
   	}
   	
