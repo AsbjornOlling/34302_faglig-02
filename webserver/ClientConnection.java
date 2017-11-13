@@ -16,35 +16,50 @@ import java.io.*;
 
 
 public class ClientConnection {
-	static ServerSocket serverSocket;
-	static Socket clientSocket;
+	// socket fields
+	ServerSocket serverSocket;
+	Socket clientSocket;
 
 	public static void main(String[] args){
-		getNextRequest();
+		ClientConnection connection = new ClientConnection(8080);
+		String request =connection.getNextRequest();
+		System.out.println(request);
 	} // main
 
-	public static String getNextRequest() {
+	// constructor
+	public ClientConnection(int port) {
 
+		try { // open serverSocket
+			serverSocket = new ServerSocket(port);
+		} catch (IOException ioEx) {
+			System.out.println("ERROR: Could not establish socket on port "+port);
+		} 
+
+	} // constructor
+
+	public String getNextRequest() {
 		BufferedReader input = null;
 		String request = null;
 
-		try { // TODO: make this block *wayyy* narrower
-			// listen on port 80
-			serverSocket = new ServerSocket(8080);
-			// connect to client - hangs here
+		try { // wait for client to connect
 			clientSocket = serverSocket.accept();
-
-			// read data:
-			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
-
-			// print data - for debug
-			request = input.readLine();
-
-			// close the sockets
-			clientSocket.close();
-			serverSocket.close();
 		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
+			System.out.println("ERROR: Client could not connect to server.");
+		}
+
+		try { // read one line from request
+			// read a line from the request
+			// TODO - allow to read multiple lines
+			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
+			request = input.readLine();
+		} catch (IOException ioEx ) {
+			System.out.println("ERROR: Could not read line from InputStream");
+		}
+
+		try { // close the client connection
+			clientSocket.close();
+		} catch (IOException ioEx) {
+			System.out.println("ERROR: Could not close connection to client.");
 		}
 
 		return request;
