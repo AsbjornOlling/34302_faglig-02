@@ -5,10 +5,14 @@
  * 
  */
 
-  //Fields
-  String status;
+public class RequestHandler {
+		
+  	//Fields
+  	String status;
 
- public handler (String URI) {
-	 String[] split = URI.split("\\s+");
-	 System.out.println(split[1]);
- }
+  	public static Handler (String URI) {
+  		String[] split = URI.split("\\s+");
+  		System.out.println(split[1]);
+ 	}
+  	
+}
