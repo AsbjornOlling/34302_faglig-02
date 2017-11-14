@@ -19,22 +19,28 @@ public class Response {
 		this.HTTP_STATUS = "HTTP/1.0 "+HTTP_STATUS+" OK"+"\r\n";
 		this.HTTP_DATE = date();
 
-		// Generate http "Content-Type:" line
-		// check it agaisnt a list of recognized files
+		// make whitelist of accepted filetypes
 		ArrayList<String> imageTypes = new ArrayList<String>();
 		imageTypes.add("gif");
 		imageTypes.add("png");
 		imageTypes.add("bmp");
 		imageTypes.add("jpg");
+
+		ArrayList<String> textTypes = new ArrayList<String>();
+		imageTypes.add("html");
+		imageTypes.add("css");
+		imageTypes.add("javascript");
+
+		// Generate http "Content-Type:" line
 		String httpTypeLine = "Content-Type: ";
 		if ( imageTypes.contains(FILETYPE) ) {
-			httpTypeLine += "image/"+FILETYPE;
-		} else if ( FILETYPE.equals("html") ) {
-			httpTypeLine += "text/html";
+			httpTypeLine += "image/";
+		} else if ( textTypes.contains(FILETYPE) ) {
+			httpTypeLine += "text/";
 		} else {
 			throw new IllegalArgumentException("ERROR: Unknown filetype requested: "+FILETYPE);
 		}
-		httpTypeLine += "\r\n";
+		httpTypeLine += FILETYPE+"\r\n";
 		this.HTTP_CONTENTTYPE = httpTypeLine;
 
 		// figure out "Content-Length" line
