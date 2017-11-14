@@ -29,10 +29,10 @@ public class Response {
 		String httpTypeLine = "Content-Type: ";
 		if ( imageTypes.contains(FILETYPE) ) {
 			httpTypeLine += "image/"+FILETYPE;
-		} else if ( FILETYPE == "html") {
+		} else if ( FILETYPE.equals("html") ) {
 			httpTypeLine += "text/html";
 		} else {
-			throw new IllegalArgumentException("ERROR: Unknown filetype requested");
+			throw new IllegalArgumentException("ERROR: Unknown filetype requested: "+FILETYPE);
 		}
 		httpTypeLine += "\r\n";
 		this.HTTP_CONTENTTYPE = httpTypeLine;

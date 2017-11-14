@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.nio.file.*;
-import java.nio.file.*;
 
 public class ClientConnection {
 	boolean serverActive = true; // what even do with this
-	final boolean DEBUG = true;
+	final boolean DEBUG = false;
 	// socket fields
 	ServerSocket serverSocket;
 	Socket clientSocket;
