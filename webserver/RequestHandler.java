@@ -32,6 +32,11 @@ public class RequestHandler {
 		String[] split = FirstLine.split("\\s+");
 		uri = split[1];
 
+		// redirect root to index.html
+		if ( uri.equals("/") ) {
+			uri = "/index.html";
+		}
+
 		// Gets the file extension for the file
 		String[] dotArray = uri.split("[.]+");
 		String ext = dotArray[dotArray.length - 1];
@@ -45,7 +50,7 @@ public class RequestHandler {
 			status = 200;
 		} else { // if it doesn't exist, get a random 404 page
 			status = 404;
-			uri = "/404-0/index.html";
+			uri = "/404-1/index.html";
 			path = FileSystems.getDefault().getPath("content" + uri);
 		}
 
