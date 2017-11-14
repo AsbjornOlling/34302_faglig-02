@@ -16,7 +16,7 @@ public class Response {
 
 
 	public Response(int HTTP_STATUS, String FILETYPE, byte[] FILE_CONTENTS) {
-		this.HTTP_STATUS = "HTTP/1.0 "+HTTP_STATUS+" OK";
+		this.HTTP_STATUS = "HTTP/1.0 "+HTTP_STATUS+" OK"+"\r\n";
 		this.HTTP_DATE = date();
 
 		// Generate http "Content-Type:" line
@@ -38,7 +38,7 @@ public class Response {
 		this.HTTP_CONTENTTYPE = httpTypeLine;
 
 		// figure out "Content-Length" line
-		this.HTTP_CONTENTLENGTH = "Content-Length: " + FILE_CONTENTS.length;
+		this.HTTP_CONTENTLENGTH = "Content-Length: " + FILE_CONTENTS.length + "\r\n";
 
 		this.FILE_CONTENTS = FILE_CONTENTS;
 	} // constructor
