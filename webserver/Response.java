@@ -31,6 +31,10 @@ public class Response {
 		imageTypes.add("bmp");
 		imageTypes.add("jpg");
 
+		ArrayList<String> audioTypes = new ArrayList<String>();
+		audioTypes.add("mp3");
+		audioTypes.add("ogg");
+
 		ArrayList<String> textTypes = new ArrayList<String>();
 		textTypes.add("html");
 		textTypes.add("css");
@@ -45,6 +49,8 @@ public class Response {
 		String httpTypeLine = "Content-Type: ";
 		if ( imageTypes.contains(filetype) ) {
 			httpTypeLine += "image/";
+		} else if ( audioTypes.contains(filetype) ) {
+			httpTypeLine += "audio/";
 		} else if ( textTypes.contains(filetype) ) {
 			httpTypeLine += "text/";
 		} else {
@@ -52,10 +58,11 @@ public class Response {
 		}
 		httpTypeLine += filetype+"\r\n";
 		this.HTTP_CONTENTTYPE = httpTypeLine;
-
 	} // constructor
 
-	// obs: this isn't tested, but should work
+
+	// gets current GMT time
+	// TODO consider if better to put straight into constructor
 	private String date() {
 		Calendar calendar = Calendar.getInstance();
     SimpleDateFormat dateFormat = new SimpleDateFormat(
