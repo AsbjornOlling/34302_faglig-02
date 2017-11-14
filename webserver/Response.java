@@ -8,17 +8,22 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 public class Response {
-	public final String httpStatus;
+	public final String HTTP_STATUS;
 	public final String HTTP_DATE;
 	public final String HTTP_CONTENTTYPE;
 	public final String HTTP_CONTENTLENGTH; // in bytes
-	public byte[] fileContents; // can this be final?
+	public final byte[] FILE_CONTENTS; // can this be final?
 
 
 	public Response(int httpStatus, String filetype, byte[] fileContents) {
-		this.httpStatus = "HTTP/1.0 "+httpStatus+" OK"+"\r\n";
+		this.HTTP_STATUS = "HTTP/1.0 "+httpStatus+" OK"+"\r\n";
 		this.HTTP_DATE = date();
+		this.FILE_CONTENTS = fileContents;
 
+		// figure out "Content-Length" line
+		this.HTTP_CONTENTLENGTH = "Content-Length: " + fileContents.length + "\r\n";
+
+		// the rest of the constructer is HTTP Content-Type
 		// make whitelist of accepted filetypes
 		ArrayList<String> imageTypes = new ArrayList<String>();
 		imageTypes.add("gif");
@@ -48,10 +53,6 @@ public class Response {
 		httpTypeLine += filetype+"\r\n";
 		this.HTTP_CONTENTTYPE = httpTypeLine;
 
-		// figure out "Content-Length" line
-		this.HTTP_CONTENTLENGTH = "Content-Length: " + fileContents.length + "\r\n";
-
-		this.fileContents = fileContents;
 	} // constructor
 
 	// obs: this isn't tested, but should work
