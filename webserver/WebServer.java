@@ -7,6 +7,7 @@
  */
 
 import java.io.*;
+import java.util.*;
 import java.net.*;
 
 public class WebServer {
@@ -19,7 +20,7 @@ public class WebServer {
 	
 		while (connection.serverActive == true) {	
 			
-			String returnValue = connection.getNextRequest();  
+			ArrayList<String> returnValue = connection.getNextRequest();  
 		
 			RequestHandler.Handler(returnValue);  // = throw value in David's face
 		
