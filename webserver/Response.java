@@ -8,18 +8,38 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 public class Response {
-	public String DATE_CREATED;
-	public final int HTTP_STATUS;
-	public final String FILETYPE;
-	public final int FILESIZE; // in bytes
+	public final String HTTP_STATUS;
+	public final String HTTP_DATE;
+	public final String HTTP_CONTENTTYPE;
+	public final String HTTP_CONTENTLENGTH; // in bytes
 	public byte[] FILE_CONTENTS; // can this be final?
 
 
 	public Response(int HTTP_STATUS, String FILETYPE, byte[] FILE_CONTENTS) {
-		this.DATE_CREATED = date();
-		this.HTTP_STATUS = HTTP_STATUS;
-		this.FILETYPE = FILETYPE;
-		this.FILESIZE = FILE_CONTENTS.length;
+		this.HTTP_STATUS = "HTTP/1.0 "+HTTP_STATUS+" OK";
+		this.HTTP_DATE = date();
+
+		// Generate http "Content-Type:" line
+		// check it agaisnt a list of recognized files
+		ArrayList<String> imageTypes = new ArrayList<String>();
+		imageTypes.add("gif");
+		imageTypes.add("png");
+		imageTypes.add("bmp");
+		imageTypes.add("jpg");
+		String httpTypeLine = "Content-Type: ";
+		if ( imageTypes.contains(FILETYPE) ) {
+			httpTypeLine += "image/"+FILETYPE;
+		} else if ( FILETYPE == "html") {
+			httpTypeLine += "image/html";
+		} else {
+			throw new IllegalArgumentException("ERROR: Unknown filetype requested");
+		}
+		httpTypeLine += "\r\n";
+		this.HTTP_CONTENTTYPE = httpTypeLine;
+
+		// figure out "Content-Length" line
+		this.HTTP_CONTENTLENGTH = "Content-Length: " + FILE_CONTENTS.length;
+
 		this.FILE_CONTENTS = FILE_CONTENTS;
 	} // constructor
 
