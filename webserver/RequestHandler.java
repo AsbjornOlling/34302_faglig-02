@@ -15,7 +15,7 @@ import java.nio.file.*;
 
 public class RequestHandler {
 
-	public static void Handler(String FirstLine) {
+	public static Response handler(String FirstLine) {
 
 		// Variables
 		String uri;
@@ -76,6 +76,6 @@ public class RequestHandler {
 		// Sends the response to the response class
 		Response resp = new Response(status, ext, fil);
 
-	}
-
+		return resp;
+	} // handler
 }
