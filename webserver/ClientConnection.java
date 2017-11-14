@@ -46,8 +46,6 @@ public class ClientConnection {
 		Response res = new Response(200, "html", htmlshit);
 		// send it back
 		connection.sendResponse(res);
-
-
 	} // main */
 
 
@@ -90,7 +88,6 @@ public class ClientConnection {
 
 
 	// send a bytearray back
-	// TODO write headers
 	public void sendResponse(Response response) {
 		// open output stream
 		BufferedOutputStream output = null;
@@ -119,6 +116,8 @@ public class ClientConnection {
 
 			output.write( response.FILE_CONTENTS );
 			if ( DEBUG ) System.out.print( new String(response.FILE_CONTENTS) );
+
+			output.flush();
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not write data to outputstream.");
 		}
