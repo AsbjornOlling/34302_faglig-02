@@ -12,7 +12,7 @@ import java.nio.file.*;
 
 public class ClientConnection {
 	boolean serverActive = true; // what even do with this
-	final boolean DEBUG = false;
+	final boolean DEBUG = true;
 	// socket fields
 	ServerSocket serverSocket;
 	Socket clientSocket;
@@ -107,7 +107,7 @@ public class ClientConnection {
 			if ( DEBUG ) System.out.println();
 
 			output.write( response.FILE_CONTENTS );
-			if ( DEBUG ) System.out.print( new String(response.FILE_CONTENTS) );
+			// if ( DEBUG ) System.out.print( new String(response.FILE_CONTENTS) );
 
 			output.flush();
 		} catch (IOException ioEx) {

@@ -36,14 +36,26 @@ public class RequestHandler {
 		String[] dotArray = uri.split("[.]+");
 		String ext = dotArray[dotArray.length - 1];
 		
+		// load the file, 404 if not found
 		byte[] fil = null;
 		Path path = FileSystems.getDefault().getPath("content" + uri);
+
+		// if the file exists, set 200 and continue as normal
+		if ( Files.exists(path) ) {
+			status = 200;
+		} else { // if it doesn't exist, get a random 404 page
+			status = 404;
+			uri = "/404-0/index.html";
+			path = FileSystems.getDefault().getPath("content" + uri);
+		}
+
+		// read the file
 		try {
 			fil = Files.readAllBytes(path);
 		} catch (IOException ioEx) {
-			System.out.println("ERROR: Could not read bytes from html file.");
+			System.out.println("ERROR: Error while loading requested file: "+uri);
 		}
-		
+	
 /*
 		// Try to read the file and change status code if sucess
 		try {
