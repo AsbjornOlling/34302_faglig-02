@@ -22,7 +22,7 @@ public class WebServer {
 			
 			ArrayList<String> returnValue = connection.getNextRequest();  
 		
-			RequestHandler.Handler(returnValue);  // = throw value in David's face
+			RequestHandler.Handler(returnValue.get(0));  // = throw value in David's face
 		
 		}
 	
