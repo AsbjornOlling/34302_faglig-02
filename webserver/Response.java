@@ -11,18 +11,19 @@ public class Response {
 	public String DATE_CREATED;
 	public final int HTTP_STATUS;
 	public final String FILETYPE;
-	public final int FILESIZE;
+	public final int FILESIZE; // in bytes
 	public byte[] FILE_CONTENTS; // can this be final?
 
 
-	public Response(int HTTP_STATUS, String FILETYPE, int FILESIZE, byte[] FILE_CONTENTS) {
+	public Response(int HTTP_STATUS, String FILETYPE, byte[] FILE_CONTENTS) {
 		this.DATE_CREATED = date();
 		this.HTTP_STATUS = HTTP_STATUS;
 		this.FILETYPE = FILETYPE;
-		this.FILESIZE = FILESIZE;
+		this.FILESIZE = FILE_CONTENTS.length;
 		this.FILE_CONTENTS = FILE_CONTENTS;
 	} // constructor
 
+	// obs: this isn't tested, but should work
 	private String date() {
 		Calendar calendar = Calendar.getInstance();
     SimpleDateFormat dateFormat = new SimpleDateFormat(

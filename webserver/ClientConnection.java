@@ -16,16 +16,18 @@ import java.net.Socket;
 import java.net.ServerSocket;
 
 public class ClientConnection {
-	boolean serverActive = true;
+	boolean serverActive = true; // what even do with this
 	// socket fields
 	ServerSocket serverSocket;
 	Socket clientSocket;
+
 
 	// TEMPORARY CODEBLOCK FOR DEBUGGIN
 	public static void main(String[] args){
 		ClientConnection connection = new ClientConnection(8080);
 		ArrayList<String> request = connection.getNextRequest();
 		for (String line : request) System.out.println(line);
+		connection.sendResponse("shiiiiet".getBytes());
 	} // main */
 
 
@@ -56,7 +58,7 @@ public class ClientConnection {
 		try {
 			String line;
 			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
-			while ( (line = input.readLine()) != null) {
+			while ( !(line = input.readLine()).isEmpty() ) {
 				request.add(line);
 			}
 		} catch (IOException ioEx ) {
@@ -64,11 +66,12 @@ public class ClientConnection {
 		}
 
 
+		/*
 		try { // close the client connection
 			clientSocket.close();
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not close connection to client.");
-		}
+		} //*/
 
 		return request;
 	} //getNextRequest
@@ -77,17 +80,16 @@ public class ClientConnection {
 	// send a bytearray back
 	// TODO write headers
 	public void sendResponse(byte[] data) {
+		// open output stream
 		BufferedOutputStream output = null;
-
-		try { // to open output stream
+		try { 
 			output = new BufferedOutputStream(clientSocket.getOutputStream());
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not open outputstream to browser.");
 		}
 
-		// TODO loop to send parts of file?
-
-		try { // writing to outputstream
+		// write byte[] data to output
+		try { 
 			output.write(data);
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not write data to outputstream.");
