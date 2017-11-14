@@ -8,15 +8,15 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 public class Response {
-	public final String HTTP_STATUS;
+	public final String httpStatus;
 	public final String HTTP_DATE;
 	public final String HTTP_CONTENTTYPE;
 	public final String HTTP_CONTENTLENGTH; // in bytes
-	public byte[] FILE_CONTENTS; // can this be final?
+	public byte[] fileContents; // can this be final?
 
 
-	public Response(int HTTP_STATUS, String FILETYPE, byte[] FILE_CONTENTS) {
-		this.HTTP_STATUS = "HTTP/1.0 "+HTTP_STATUS+" OK"+"\r\n";
+	public Response(int httpStatus, String filetype, byte[] fileContents) {
+		this.httpStatus = "HTTP/1.0 "+httpStatus+" OK"+"\r\n";
 		this.HTTP_DATE = date();
 
 		// make whitelist of accepted filetypes
@@ -31,22 +31,27 @@ public class Response {
 		textTypes.add("css");
 		textTypes.add("javascript");
 
+		// list js as javascript
+		if ( filetype.equals("js") ) {
+			filetype = "javascript";
+		}
+
 		// Generate http "Content-Type:" line
 		String httpTypeLine = "Content-Type: ";
-		if ( imageTypes.contains(FILETYPE) ) {
+		if ( imageTypes.contains(filetype) ) {
 			httpTypeLine += "image/";
-		} else if ( textTypes.contains(FILETYPE) ) {
+		} else if ( textTypes.contains(filetype) ) {
 			httpTypeLine += "text/";
 		} else {
-			throw new IllegalArgumentException("ERROR: Unknown filetype requested: "+FILETYPE);
+			throw new IllegalArgumentException("ERROR: Unknown filetype requested: "+filetype);
 		}
-		httpTypeLine += FILETYPE+"\r\n";
+		httpTypeLine += filetype+"\r\n";
 		this.HTTP_CONTENTTYPE = httpTypeLine;
 
 		// figure out "Content-Length" line
-		this.HTTP_CONTENTLENGTH = "Content-Length: " + FILE_CONTENTS.length + "\r\n";
+		this.HTTP_CONTENTLENGTH = "Content-Length: " + fileContents.length + "\r\n";
 
-		this.FILE_CONTENTS = FILE_CONTENTS;
+		this.fileContents = fileContents;
 	} // constructor
 
 	// obs: this isn't tested, but should work
