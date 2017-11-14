@@ -42,10 +42,15 @@ public class RequestHandler {
 		if ( Files.exists(path) ) {
 			status = 200;
 		} else { // if it doesn't exist, get a random 404 page
+
+			// chose randomly between 0-5
 			Random rand = new Random();
-			int pageno = rand.nextInt(4); // between 0-3
+			int pageno = rand.nextInt(6); 
+
+			// set new variables
 			status = 404;
 			uri = "/404-"+pageno+"/index.html";
+			ext = "html";
 			path = FileSystems.getDefault().getPath("content" + uri);
 		}
 
