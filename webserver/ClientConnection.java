@@ -10,9 +10,10 @@
 // close connection
 // return data to main
 
+import java.io.*;
+import java.util.ArrayList;
 import java.net.Socket;
 import java.net.ServerSocket;
-import java.io.*;
 
 public class ClientConnection {
 	boolean serverActive = true;
@@ -23,9 +24,9 @@ public class ClientConnection {
 	// TEMPORARY CODEBLOCK FOR DEBUGGIN
 	public static void main(String[] args){
 		ClientConnection connection = new ClientConnection(8080);
-		String request = connection.getNextRequest();
-		System.out.println(request);
-	} // main
+		ArrayList<String> request = connection.getNextRequest();
+		for (String line : request) System.out.println(line);
+	} // main */
 
 
 	// constructor
@@ -38,25 +39,30 @@ public class ClientConnection {
 	} // constructor
 
 
-	// wait for and return a request from browser
-	public String getNextRequest() {
+	// wait for the next request
+	// and put it into an arrayList
+	public ArrayList<String> getNextRequest() {
 		BufferedReader input = null;
-		String request = null;
+		ArrayList<String> request = new ArrayList<String>();
 
-		try { // wait for client to connect
+		// wait for client to connect
+		try { 
 			clientSocket = serverSocket.accept();
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Client could not connect to server.");
 		}
 
-		try { // read one line from request
-			// read a line from the request
-			// TODO - allow to read multiple lines of requeest
+		// read the request
+		try {
+			String line;
 			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
-			request = input.readLine();
+			while ( (line = input.readLine()) != null) {
+				request.add(line);
+			}
 		} catch (IOException ioEx ) {
 			System.out.println("ERROR: Could not read line from InputStream");
 		}
+
 
 		try { // close the client connection
 			clientSocket.close();
