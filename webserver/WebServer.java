@@ -25,7 +25,7 @@ public class WebServer {
 	
 		// call requesthandler with just first line of the request
 		// put response into object
-		Response response = RequestHandler.Handler(request.get(0));
+		Response response = RequestHandler.handler(request.get(0));
 
 		// send the response object out to server, and close client socket
 		connection.sendResponse(response);
