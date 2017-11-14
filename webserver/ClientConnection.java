@@ -4,12 +4,6 @@
  * Blame Asbjørn for any and all faults.
  */
 
-// have a socket
-// wait for connections on the socket
-// receive data
-// close connection
-// return data to main
-
 import java.io.*;
 import java.util.ArrayList;
 import java.net.Socket;
@@ -24,7 +18,7 @@ public class ClientConnection {
 	ServerSocket serverSocket;
 	Socket clientSocket;
 
-
+	/*
 	// TEMPORARY CODEBLOCK FOR DEBUGGIN
 	public static void main(String[] args){
 		// make connection, get request
@@ -32,18 +26,17 @@ public class ClientConnection {
 		ArrayList<String> request = connection.getNextRequest();
 		for (String line : request) System.out.println(line);
 
-		
 		// make bogus html file
-		byte[] htmlshit = null;
-		Path path = FileSystems.getDefault().getPath("content", "index.html");
+		byte[] tempfile = null;
+		Path path = FileSystems.getDefault().getPath("content", "dtulogo.gif");
 		try {
-			htmlshit = Files.readAllBytes(path);
+			tempfile = Files.readAllBytes(path);
 		} catch (IOException ioEx) {
-			System.out.println("ERROR: Could not read bytes from html file.");
+			System.out.println("ERROR: Could not read bytes from temp file.");
 		}
 
 		// make bogus response object
-		Response res = new Response(200, "html", htmlshit);
+		Response res = new Response(200, "gif", tempfile);
 		// send it back
 		connection.sendResponse(res);
 	} // main */
