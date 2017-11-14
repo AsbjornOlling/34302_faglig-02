@@ -8,9 +8,9 @@
 import java.io.*;
 import java.util.*;
 
-import javax.xml.ws.Response;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.*;
 
 
 public class RequestHandler {
@@ -19,7 +19,7 @@ public class RequestHandler {
 
 		// Variables
 		String uri;
-		int status;
+		int status = 0;
 /*
 		boolean readAll = false;
 		int nRead = 0;
