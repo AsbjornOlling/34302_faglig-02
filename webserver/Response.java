@@ -27,9 +27,9 @@ public class Response {
 		imageTypes.add("jpg");
 
 		ArrayList<String> textTypes = new ArrayList<String>();
-		imageTypes.add("html");
-		imageTypes.add("css");
-		imageTypes.add("javascript");
+		textTypes.add("html");
+		textTypes.add("css");
+		textTypes.add("javascript");
 
 		// Generate http "Content-Type:" line
 		String httpTypeLine = "Content-Type: ";
