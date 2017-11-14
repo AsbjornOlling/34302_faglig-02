@@ -34,7 +34,7 @@ public class RequestHandler {
   		}
   		
   		// Sends the response to the response class
-  		Response.Response(status; ext; int Size = 0; byte[] content);
+  		Response.Response(status, ext, int Size = 0, byte[] content);
   	}
   	
 }
