@@ -17,29 +17,6 @@ public class ClientConnection {
 	ServerSocket serverSocket;
 	Socket clientSocket;
 
-	/*
-	// TEMPORARY CODEBLOCK FOR DEBUGGIN
-	public static void main(String[] args){
-		// make connection, get request
-		ClientConnection connection = new ClientConnection(8080);
-		ArrayList<String> request = connection.getNextRequest();
-		for (String line : request) System.out.println(line);
-
-		// make bogus html file
-		byte[] tempfile = null;
-		Path path = FileSystems.getDefault().getPath("content", "dtulogo.gif");
-		try {
-			tempfile = Files.readAllBytes(path);
-		} catch (IOException ioEx) {
-			System.out.println("ERROR: Could not read bytes from temp file.");
-		}
-
-		// make bogus response object
-		Response res = new Response(200, "gif", tempfile);
-		// send it back
-		connection.sendResponse(res);
-	} // main */
-
 
 	// constructor
 	public ClientConnection(int port) {
