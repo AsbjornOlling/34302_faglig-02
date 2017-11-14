@@ -8,15 +8,12 @@
 import java.io.*;
 
 public class RequestHandler {
-		
-  	//Fields
-  	int status;
-  	String ext;
 
   	public static void Handler (String FirstLine) {
   		
-  		//Variables
+  		// Variables
   		String uri;
+  		int status;
   		
   		// Gets the URI for the file
   		String[] split = FirstLine.split("\\s+");
@@ -24,15 +21,20 @@ public class RequestHandler {
   		
   		// Gets the file extension for the file 
   		String[] dotArray = uri.split("[.]+");
-  		ext = dotArray[dotArray.length - 1];
-  		System.out.println(ext);
+  		String ext = dotArray[dotArray.length - 1];
+  		
+  		// Try to read the file and change status code if sucess
   		try {
   			BufferedReader fil = new BufferedReader ( new FileReader ("content" + uri) );
   			status = 200;
   		} catch (FileNotFoundException e){
-  		    System.out.println(e);
-  		    status = 404;
+  		    
+  			// Change the status code if fail
+  			status = 404;
   		}
+  		
+  		// Sends the response to the response class
+  		Response.Response(status; ext; int Size = 0; byte[] content);
   	}
   	
 }
