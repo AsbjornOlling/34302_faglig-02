@@ -30,7 +30,7 @@ public class Response {
 		if ( imageTypes.contains(FILETYPE) ) {
 			httpTypeLine += "image/"+FILETYPE;
 		} else if ( FILETYPE == "html") {
-			httpTypeLine += "image/html";
+			httpTypeLine += "text/html";
 		} else {
 			throw new IllegalArgumentException("ERROR: Unknown filetype requested");
 		}
@@ -49,7 +49,7 @@ public class Response {
     SimpleDateFormat dateFormat = new SimpleDateFormat(
         "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
     dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-    return dateFormat.format(calendar.getTime());
+    return dateFormat.format(calendar.getTime())+"\r\n";
 	}
 
 } // class
