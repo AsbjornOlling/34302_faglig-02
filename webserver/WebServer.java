@@ -17,17 +17,22 @@ public class WebServer {
 	ClientConnection connection = new ClientConnection(8080);
 	
 	// receive requests as long as server is active
+	// this is permanently true for now	
+	while (connection.serverActive == true) {	
+		
+		// open socket and wait for a request to arrive
+		ArrayList<String> request = connection.getNextRequest();  
 	
-		while (connection.serverActive == true) {	
-			
-			ArrayList<String> returnValue = connection.getNextRequest();  
-		
-			RequestHandler.Handler(returnValue.get(0));  // = throw value in David's face
-		
-		}
+		// call requesthandler with just first line of the request
+		// put response into object
+		Response response = RequestHandler.Handler(request.get(0));
+
+		// send the response object out to server, and close client socket
+		connection.sendResponse(response);
+	}
 	
 	System.out.print("CONNECTION TERMINATED.\r\n");	
 	// connection closed
 		
-	}
-}
+	} // main
+} // class
