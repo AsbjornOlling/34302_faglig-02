@@ -46,8 +46,10 @@ public class ClientConnection {
 			String line;
 			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
 			while ( !(line = input.readLine()).isEmpty() ) {
+				if (DEBUG) System.out.println(line);
 				request.add(line);
 			}
+			if (DEBUG) System.out.print("\n");
 		} catch (IOException ioEx ) {
 			System.out.println("ERROR: Could not read line from InputStream");
 		}

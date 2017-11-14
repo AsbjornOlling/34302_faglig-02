@@ -14,6 +14,7 @@ import java.nio.file.*;
 
 
 public class RequestHandler {
+	private final boolean DEBUG = true;
 
 	public static Response handler(String FirstLine) {
 
