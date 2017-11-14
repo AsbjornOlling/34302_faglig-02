@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.net.Socket;
 import java.net.ServerSocket;
+import java.nio.file.*;
+import java.nio.file.*;
 
 public class ClientConnection {
 	boolean serverActive = true; // what even do with this
@@ -30,10 +32,22 @@ public class ClientConnection {
 		ArrayList<String> request = connection.getNextRequest();
 		for (String line : request) System.out.println(line);
 
+		
+		// make bogus html file
+		byte[] htmlshit = null;
+		Path path = FileSystems.getDefault().getPath("content", "index.html");
+		try {
+			htmlshit = Files.readAllBytes(path);
+		} catch (IOException ioEx) {
+			System.out.println("ERROR: Could not read bytes from html file.");
+		}
+
 		// make bogus response object
-		Response res = new Response(200, "html", "hello world".getBytes());
+		Response res = new Response(200, "html", htmlshit);
 		// send it back
 		connection.sendResponse(res);
+
+
 	} // main */
 
 
@@ -89,31 +103,33 @@ public class ClientConnection {
 		// write some shit to browser
 		try { 
 			output.write( response.HTTP_STATUS.getBytes() );
-			if ( DEBUG ) System.out.println(response.HTTP_STATUS);
+			if ( DEBUG ) System.out.print(response.HTTP_STATUS);
 
 			output.write( response.HTTP_DATE.getBytes() );
-			if ( DEBUG ) System.out.println(response.HTTP_DATE);
+			if ( DEBUG ) System.out.print(response.HTTP_DATE);
 
 			output.write( response.HTTP_CONTENTTYPE.getBytes() );
-			if ( DEBUG ) System.out.println(response.HTTP_CONTENTTYPE);
+			if ( DEBUG ) System.out.print(response.HTTP_CONTENTTYPE);
 
 			output.write( response.HTTP_CONTENTLENGTH.getBytes() );
-			if ( DEBUG ) System.out.println(response.HTTP_CONTENTLENGTH);
+			if ( DEBUG ) System.out.print(response.HTTP_CONTENTLENGTH);
 			
 			output.write( "\r\n".getBytes() );
 			if ( DEBUG ) System.out.println();
 
 			output.write( response.FILE_CONTENTS );
-			if ( DEBUG ) System.out.println( new String(response.FILE_CONTENTS) );
+			if ( DEBUG ) System.out.print( new String(response.FILE_CONTENTS) );
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not write data to outputstream.");
 		}
 
-		try { // close the client connection
+		// close the client connection
+		try {
 			clientSocket.close();
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Could not close connection to client.");
 		} //*/
+
 	} // sendResponse
 
 } // class
