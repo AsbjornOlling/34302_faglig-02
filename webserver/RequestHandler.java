@@ -20,14 +20,7 @@ public class RequestHandler {
 		// Variables
 		String uri;
 		int status = 0;
-/*
-		boolean readAll = false;
-		int nRead = 0;
-		byte[] buffer = new byte[1024];
-		FileInputStream fin = null;
-		List<Byte> temp = null;
-		byte[] content;
-*/
+
 		// Gets the URI for the file
 		String[] split = FirstLine.split("\\s+");
 		uri = split[1];
@@ -50,7 +43,7 @@ public class RequestHandler {
 			status = 200;
 		} else { // if it doesn't exist, get a random 404 page
 			status = 404;
-			uri = "/404-1/index.html";
+			uri = "/404-2/index.html";
 			path = FileSystems.getDefault().getPath("content" + uri);
 		}
 
@@ -60,36 +53,7 @@ public class RequestHandler {
 		} catch (IOException ioEx) {
 			System.out.println("ERROR: Error while loading requested file: "+uri);
 		}
-	
-/*
-		// Try to read the file and change status code if sucess
-		try {
-			// BufferedReader file = new BufferedReader ( new FileReader
-			// ("content" + uri) );
-			fin = new FileInputStream("content" + uri);
-			status = 200;
-		} catch (FileNotFoundException e) {
 
-			// Change the status code if fail
-			status = 404;
-		}
-
-		// Gets the bites for the file
-		while (readAll == false) {
-			nRead = fin.read(buffer); // Læs op til 1024 bytes fra filen
-			if (nRead == -1) {
-				// Nu er vi nået til end-of-file
-				fin.close();
-				readAll = true;
-				content = temp.toArray(new Byte[temp.size()]);
-			} else {
-
-				temp = new ArrayList<Byte>();
-
-
-			}
-		}
-*/		
 		// Sends the response to the response class
 		Response resp = new Response(status, ext, fil);
 
