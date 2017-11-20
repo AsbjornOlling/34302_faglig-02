@@ -45,7 +45,8 @@ public class ClientConnection {
 		try {
 			String line;
 			input = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
-			while ( !(line = input.readLine()).isEmpty() ) {
+			while ( !( (line = input.readLine()) == null ) ) {
+				if ( line.isEmpty() ) break;
 				if (DEBUG) System.out.println(line);
 				request.add(line);
 			}
