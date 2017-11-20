@@ -21,6 +21,8 @@
 import java.util.Scanner;
 
 public class TicTacToe {
+	private static final boolean DEBUG = true;
+
 	private static char[] blankBoard = {'.','.','.','.','.','.','.','.','.'};
 	public static char[] boardState = blankBoard.clone();
 
@@ -115,7 +117,7 @@ public class TicTacToe {
 
 			///////////////////////
 			//IN CASE OF GAMEOVER//
-			//		BREAK LOOP     //
+			//    BREAK LOOP     //
 			///////////////////////
 			if ( !LarsServer.gameState.equals("YOUR TURN")) {
 				// TODO: odd bug - on player win, gameState line is actually boardState
@@ -162,6 +164,7 @@ public class TicTacToe {
 		// SOME error handlign
 		// this is where ILLEGALMOVE is caught
 		if (boardLine.length() != 18) {
+			if (DEBUG) System.out.println("LAST MOVE:" + playerMove);
 			throw new IllegalArgumentException("Read bad boardLine from server: "+boardLine);
 		}
 

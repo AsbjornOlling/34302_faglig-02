@@ -8,8 +8,9 @@ public class AI {
 	private final int MAX_DEPTH = 10000;
 	private final char PLAYER;
 	private final char OPPONENT;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
+	/*
 	public static void main(String[] args) {
 		// works fine from here (last i checked)
 		char[] aBoard = {'O','.','O',
@@ -17,8 +18,8 @@ public class AI {
 										 'X','X','O'};
 		AI robot = new AI('O');
 		robot.makeMove(aBoard);
-		//*/
 	}
+		//*/
 
 
 	// constructor
@@ -42,7 +43,7 @@ public class AI {
 
 		if ( DEBUG ) System.out.println("Checking moves for "+PLAYER+" at depth 0");
 
-		int bestMove = -1; // invalid move
+		int bestMove = -1; // invalid move - to ake sure its replaced
 		int bestScore = -20; // lowest possible score
 		for ( int i : validMoves ) {
 
@@ -121,6 +122,7 @@ public class AI {
 		return bestScore;
 	} // evaluateBoard
 
+
 	public ArrayList<Integer> getEmptyIndexes(char[] passedBoard) {
 		// find the empty spaces on the board
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
@@ -155,5 +157,4 @@ public class AI {
 			return false;
 		}
 	} // checkForWin
-
 } // class
