@@ -13,4 +13,33 @@
 // test
 public class BoardDrawer {
 
+	
+	
+	String[] layersOfX = {
+			
+			"X   X",                
+			" X X ",
+			"  X  ",
+			" X X ",
+			"X   X"
+			}; 					//  declaring "X" and "O" fields
+			          			//  for the board + the line in between
+	String[] layersOfO = {
+			
+			" OOO ",
+			"O   O",
+			"O   O",
+			"O   O",
+			" OOO "
+			};
+	
+	String flatLine = "+------+------+------+";
+
+
+		int[] grid = {1,2,3};
+		
+	
+		for (i = 1; i<=3; i++ ) {
+			
+		}
 }
