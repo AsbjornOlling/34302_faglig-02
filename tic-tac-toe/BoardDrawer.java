@@ -13,15 +13,17 @@
 // test
 public class BoardDrawer {
 
+	
+	
 	String[] layersOfX = {
 			
-			"X   X",
+			"X   X",                
 			" X X ",
 			"  X  ",
 			" X X ",
 			"X   X"
-			};
-			
+			}; 					//  declaring "X" and "O" fields
+			          			//  for the board + the line in between
 	String[] layersOfO = {
 			
 			" OOO ",
