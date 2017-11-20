@@ -46,7 +46,7 @@ public class RequestHandler {
 
 			// chose randomly between 0-5
 			Random rand = new Random();
-			int pageno = rand.nextInt(6); 
+			int pageno = rand.nextInt(5); 
 
 			// set new variables
 			status = 404;
