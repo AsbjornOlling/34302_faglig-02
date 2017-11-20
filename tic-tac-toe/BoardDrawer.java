@@ -13,4 +13,21 @@
 // test
 public class BoardDrawer {
 
+	String[] layersOfX = {
+			"X   X"
+			" X X "
+			"  X  "
+			" X X "
+			"X   X"
+			}
+			
+	String[] layersOfO = {
+			" OOO "
+			"O   O"
+			"O   O"
+			"O   O"
+			" OOO "
+			}
+	
+	
 }
